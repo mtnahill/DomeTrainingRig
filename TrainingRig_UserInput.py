@@ -1,4 +1,4 @@
-
+# coding: utf-8
 # Takes the input of:
 # Rat Number
 # Training Day
@@ -32,8 +32,10 @@ buttons = ( (LCD.SELECT, 'Select', (1,1,1)),
             (LCD.DOWN,   'Down'  , (0,1,0)),
             (LCD.RIGHT,  'Right' , (1,0,1)) )
 
-print 'Press Ctrl-C to quit.'
-while True:
+print("Press Ctrl-C to quit.")
+
+# Testing code
+while False:
 	# Loop through each button and check if it is pressed.
 	for button in buttons:
 		if lcd.is_pressed(button[0]):
@@ -41,6 +43,7 @@ while True:
 			lcd.clear()
 			lcd.message(button[1])
 			lcd.set_color(button[2][0], button[2][1], button[2][2])
+
 ################################################################################################
 
 # Start MT Code
@@ -55,36 +58,37 @@ laps = [0]*5
 # Display Input on LCD Screen			# LAPS INPUT
 lcd.clear()					# Clear LCD Screen
 lcd.message(laps_str)				# Request User Input
-laps_str_length = length(laps_str) 		# Find Length of user input request string
+laps_str_length = len(laps_str) 		# Find Length of user input request string
  		
 
 # Repeat process until select is pressed
 while lcd.is_pressed(LCD.SELECT) == False:  	# Waits for User to Press Select
-	lcd.setcursor(laps_str_length+1,0)	# Set Cursor to be after string - awaiting input
+	lcd.set_cursor(laps_str_length+1,0)	# Set Cursor to be after string - awaiting input
 	if lcd.is_pressed(LCD.UP): 		# When Up button is pressed…
         	x = x + 1			# Increases internal Variable
-        	lcd.message(x) 			# Prints internal variable on LCD Screen
+        	lcd.message(str(x)) 		# Prints internal variable on LCD Screen
 		laps.insert(x,0)		# Saves internal variable to an array
         
 	if lcd.is_pressed(LCD.DOWN): 		# When Down button is Pressed…
         	x = x - 1			# Decreases internal variable
-        	lcd.message(x) 			# Prints internal variable on LCD Screen
+        	lcd.message(str(x)) 		# Prints internal variable on LCD Screen
 		laps.insert(x,0)		# Saves internal variables to an array
-print ’Entered Number of Laps is:’		# Prints String to Terminal
-print laps        				# Prints the number of laps to the Terminal
+
+print("Entered Number of Laps is:")		# Prints String to Terminal
+print(laps)        				# Prints the number of laps to the Terminal
 
 # End of Laps Input
-###################################################
+
 # Start Rat Number Input			# RAT NUMBER INPUT
 x = 0						# Define internal variable
-rat_num_str = (‘Rat Number:’)			# Define string to request user input 
+rat_num_str = ("Rat Number:")			# Define string to request user input 
 rat_num = [0]*5					# Define array to store rat number
 
 # Display Input on LCD Screen			
 lcd.clear()					# Clear LCD Screen
 lcd.message(rat_num_str)			# Request User Input
-rat_num_str_length = length(rat_num_str) 	# Find Length of user input request string
-lcd.setcursor(rat_num_str,0) 			# Set Cursor to be after string - awaiting input
+rat_num_str_length = len(rat_num_str) 		# Find Length of user input request string
+lcd.set_cursor(rat_num_str,0) 			# Set Cursor to be after string - awaiting input
 
 # Repeat process until select is pressed
 while lcd.is_pressed(LCD.SELECT) == False:  	# Waits for User to Press Select
@@ -97,8 +101,8 @@ while lcd.is_pressed(LCD.SELECT) == False:  	# Waits for User to Press Select
         	x = x - 1			# Decreases internal variable
         	lcd.message(x) 			# Prints internal variable on LCD Screen
 		laps.insert(x,0)		# Saves internal variables to an array
-print ’Rat Number is:’				# Prints String to Terminal
-print rat_num        				# Prints internal variable to the Terminal
+print("Rat Number is:")				# Prints String to Terminal
+print(rat_num)        				# Prints internal variable to the Terminal
 
 # End of Rat Number Input
 
@@ -106,14 +110,14 @@ print rat_num        				# Prints internal variable to the Terminal
 
 # Start Training Day Input			# TRAINING DAY INPUT
 x = 0						# Define internal variable
-date_str = (‘Training Day:’)			# Define string to request user input 
+date_str = ("Training Day:")			# Define string to request user input 
 date = [0]*5					# Define array to store rat number
 
 # Display Input on LCD Screen			
 lcd.clear()					# Clear LCD Screen
 lcd.message(date_str)				# Request User Input
-date_str_length = length(date_str) 		# Find Length of user input request string
-lcd.setcursor(date_str,0) 			# Set Cursor to be after string - awaiting input
+date_str_length = len(date_str) 		# Find Length of user input request string
+lcd.set_cursor(date_str,0) 			# Set Cursor to be after string - awaiting input
 
 # Repeat process until select is pressed
 while lcd.is_pressed(LCD.SELECT) == False:  	# Waits for User to Press Select
@@ -126,8 +130,8 @@ while lcd.is_pressed(LCD.SELECT) == False:  	# Waits for User to Press Select
         	x = x - 1			# Decreases internal variable
         	lcd.message(x) 			# Prints internal variable on LCD Screen
 		laps.insert(x,0)		# Saves internal variables to an array
-print ’Training Date is:’			# Prints String to Terminal
-print date       				# Prints internal variable to the Terminal
+print("Training Date is:")			# Prints String to Terminal
+print(date)       				# Prints internal variable to the Terminal
 
 # End of Training Date Input
 
@@ -138,7 +142,7 @@ print date       				# Prints internal variable to the Terminal
 
 
 
-degrees = ('Enter Degrees:')
+degrees = ("Enter Degrees:")
 if lcd.is_pressed(LCD.SELECT):
         lcd.clear()
         lcd.message(degrees)
