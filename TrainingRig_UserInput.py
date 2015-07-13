@@ -16,13 +16,8 @@ import Adafruit_CharLCD as LCD
 # Initialize the LCD using the pins 
 lcd = LCD.Adafruit_CharLCDPlate()
 
-# Set backlight color to Blue and display the word blue, from tutorial
+# Set backlight color to Blue
 lcd.set_color(0.0, 0.0, 1.0)
-lcd.clear()
-lcd.message('BLUE \x03')
-time.sleep(3.0)
-
-# Show button state.
 lcd.clear()
 
 # Make list of button value, text, and backlight color.
@@ -44,16 +39,12 @@ while False:
 			lcd.message(button[1])
 			lcd.set_color(button[2][0], button[2][1], button[2][2])
 
-################################################################################################
-
-# Start MT Code
-
 # Start Laps Input.
 
 # Set Variables
-x = 0 # Counter internal loop variable
+x = 0 						# Counter internal loop variable
 laps_str = ('Enter Laps:')
-laps = [0]*5
+laps = 1
 
 # Display Input on LCD Screen			# LAPS INPUT
 lcd.clear()					# Clear LCD Screen
@@ -64,16 +55,30 @@ laps_str_length = len(laps_str) 		# Find Length of user input request string
 # Repeat process until select is pressed
 while lcd.is_pressed(LCD.SELECT) == False:  	# Waits for User to Press Select
 	lcd.set_cursor(laps_str_length+1,0)	# Set Cursor to be after string - awaiting input
-	if lcd.is_pressed(LCD.UP): 		# When Up button is pressed…
-        	x = x + 1			# Increases internal Variable
-        	lcd.message(str(x)) 		# Prints internal variable on LCD Screen
-		laps.insert(x,0)		# Saves internal variable to an array
-        
-	if lcd.is_pressed(LCD.DOWN): 		# When Down button is Pressed…
-        	x = x - 1			# Decreases internal variable
-        	lcd.message(str(x)) 		# Prints internal variable on LCD Screen
-		laps.insert(x,0)		# Saves internal variables to an array
 
+	if lcd.is_pressed(LCD.UP): 		# While up button is pressed but not released
+		while lcd.is_pressed(LCD.UP):
+			pass
+        	x = x + 1			# Increases internal Variable	
+		lcd.message('   ');		# Clear variable before printing new one
+		lcd.set_cursor(laps_str_length+1,0)	# Set Cursor to be after string
+		lcd.message(str(x)) 		# Prints internal variable on LCD Screen
+		time.sleep(0.1)			# Crappy debouncing
+        
+	elif lcd.is_pressed(LCD.DOWN): 		# While down button is pressed but not released
+		while lcd.is_pressed(LCD.DOWN):
+			pass
+        	x = (x-1) if (x > 1) else 1	# Decreases internal variable
+		lcd.message('   ');		# Clear variable before printing new one
+		lcd.set_cursor(laps_str_length+1,0)	# Set Cursor to be after string
+		lcd.message(str(x)) 		# Prints internal variable on LCD Screen
+		time.sleep(0.1)			# Crappy debouncing
+
+# Wait for select to be released
+while lcd.is_pressed(LCD.SELECT) == TRUE:
+	pass
+
+laps = x if (x > 0) else 1
 print("Entered Number of Laps is:")		# Prints String to Terminal
 print(laps)        				# Prints the number of laps to the Terminal
 
@@ -82,25 +87,41 @@ print(laps)        				# Prints the number of laps to the Terminal
 # Start Rat Number Input			# RAT NUMBER INPUT
 x = 0						# Define internal variable
 rat_num_str = ("Rat Number:")			# Define string to request user input 
-rat_num = [0]*5					# Define array to store rat number
+rat_num = 0		
 
 # Display Input on LCD Screen			
 lcd.clear()					# Clear LCD Screen
 lcd.message(rat_num_str)			# Request User Input
 rat_num_str_length = len(rat_num_str) 		# Find Length of user input request string
-lcd.set_cursor(rat_num_str,0) 			# Set Cursor to be after string - awaiting input
+lcd.set_cursor(rat_num_str_length,0) 		# Set Cursor to be after string - awaiting input
 
 # Repeat process until select is pressed
 while lcd.is_pressed(LCD.SELECT) == False:  	# Waits for User to Press Select
-	if lcd.is_pressed(LCD.UP): 		# When Up button is pressed…
-        	x = x + 1			# Increases internal Variable
-        	lcd.message(x) 			# Prints internal variable on LCD Screen
-		laps.insert(x,0)		# Saves internal variable to an array
+	lcd.set_cursor(rat_num_str_length+1,0)	# Set Cursor to be after string - awaiting input
+
+	if lcd.is_pressed(LCD.UP): 		# While up button is pressed but not released
+		while lcd.is_pressed(LCD.UP):
+			pass
+        	x = x + 1			# Increases internal Variable	
+		lcd.message('   ')		# Clear variable before printing new one
+		lcd.set_cursor(rat_num_str_length+1,0)	# Set Cursor to be after string
+		lcd.message(str(x)) 		# Prints internal variable on LCD Screen
+		time.sleep(0.1)			# Crappy debouncing
         
-	if lcd.is_pressed(LCD.DOWN): 		# When Down button is Pressed…
-        	x = x - 1			# Decreases internal variable
-        	lcd.message(x) 			# Prints internal variable on LCD Screen
-		laps.insert(x,0)		# Saves internal variables to an array
+	elif lcd.is_pressed(LCD.DOWN): 		# While down button is pressed but not released
+		while lcd.is_pressed(LCD.DOWN):
+			pass
+        	x = (x-1) if (x > 0) else 0	# Decreases internal variable
+		lcd.message('   ')		# Clear variable before printing new one
+		lcd.set_cursor(rat_num_str_length+1,0)	# Set Cursor to be after string
+		lcd.message(str(x)) 		# Prints internal variable on LCD Screen
+		time.sleep(0.1)			# Crappy debouncing
+
+# Wait for select to be released
+while lcd.is_pressed(LCD.SELECT) == TRUE:
+	pass
+
+rat_num = x
 print("Rat Number is:")				# Prints String to Terminal
 print(rat_num)        				# Prints internal variable to the Terminal
 
@@ -111,25 +132,41 @@ print(rat_num)        				# Prints internal variable to the Terminal
 # Start Training Day Input			# TRAINING DAY INPUT
 x = 0						# Define internal variable
 date_str = ("Training Day:")			# Define string to request user input 
-date = [0]*5					# Define array to store rat number
+date = 0					# Define array to store rat number
 
 # Display Input on LCD Screen			
 lcd.clear()					# Clear LCD Screen
 lcd.message(date_str)				# Request User Input
 date_str_length = len(date_str) 		# Find Length of user input request string
-lcd.set_cursor(date_str,0) 			# Set Cursor to be after string - awaiting input
+lcd.set_cursor(date_str_length,0) 			# Set Cursor to be after string - awaiting input
 
 # Repeat process until select is pressed
 while lcd.is_pressed(LCD.SELECT) == False:  	# Waits for User to Press Select
-	if lcd.is_pressed(LCD.UP): 		# When Up button is pressed…
-        	x = x + 1			# Increases internal Variable
-        	lcd.message(x) 			# Prints internal variable on LCD Screen
-		laps.insert(x,0)		# Saves internal variable to an array
+	lcd.set_cursor(date_str_length+1,0)	# Set Cursor to be after string - awaiting input
+
+	if lcd.is_pressed(LCD.UP): 		# While up button is pressed but not released
+		while lcd.is_pressed(LCD.UP):
+			pass
+        	x = x + 1			# Increases internal Variable	
+		lcd.message('   ');		# Clear variable before printing new one
+		lcd.set_cursor(date_str_length+1,0)	# Set Cursor to be after string
+		lcd.message(str(x)) 		# Prints internal variable on LCD Screen
+		time.sleep(0.1)			# Crappy debouncing
         
-	if lcd.is_pressed(LCD.DOWN): 		# When Down button is Pressed…
-        	x = x - 1			# Decreases internal variable
-        	lcd.message(x) 			# Prints internal variable on LCD Screen
-		laps.insert(x,0)		# Saves internal variables to an array
+	elif lcd.is_pressed(LCD.DOWN): 		# While down button is pressed but not released
+		while lcd.is_pressed(LCD.DOWN):
+			pass
+        	x = (x-1) if (x > 0) else 0	# Decreases internal variable
+		lcd.message('   ');		# Clear variable before printing new one
+		lcd.set_cursor(date_str_length+1,0)	# Set Cursor to be after string
+		lcd.message(str(x)) 		# Prints internal variable on LCD Screen
+		time.sleep(0.1)			# Crappy debouncing
+
+# Wait for select to be released
+while lcd.is_pressed(LCD.SELECT) == TRUE:
+	pass
+
+date = x
 print("Training Date is:")			# Prints String to Terminal
 print(date)       				# Prints internal variable to the Terminal
 
@@ -137,22 +174,8 @@ print(date)       				# Prints internal variable to the Terminal
 
 ##################################################
 
+degrees_str = ("Enter Degrees:")
 
-
-
-
-
-degrees = ("Enter Degrees:")
-if lcd.is_pressed(LCD.SELECT):
-        lcd.clear()
-        lcd.message(degrees)
-
-ratnumber
-        
-
-# End MT Code
-
-##################################################################################################
 
 # Below here is all from Dr. Madhav's code
 			
@@ -196,11 +219,5 @@ if __name__ ==  '__main__':
             f.close();
             run = 0;
 # End Dr. Madhav Code
-
-##################################################################################################
-
-
-
-
 
 
