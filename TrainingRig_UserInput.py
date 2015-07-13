@@ -50,7 +50,6 @@ laps = 1
 lcd.clear()					# Clear LCD Screen
 lcd.message(laps_str)				# Request User Input
 laps_str_length = len(laps_str) 		# Find Length of user input request string
- 		
 
 # Repeat process until select is pressed
 while lcd.is_pressed(LCD.SELECT) == False:  	# Waits for User to Press Select
@@ -85,6 +84,7 @@ print(laps)        				# Prints the number of laps to the Terminal
 # End of Laps Input
 
 ##################################################
+
 # Start Rat Number Input			# RAT NUMBER INPUT
 x = 0						# Define internal variable
 rat_num_str = ("Rat Num:")			# Define string to request user input 
@@ -132,25 +132,25 @@ print(rat_num)        				# Prints internal variable to the Terminal
 
 # Start Training Day Input			# TRAINING DAY INPUT
 x = 0						# Define internal variable
-date_str = ("Day:")				# Define string to request user input 
-date = 0					# Define array to store rat number
+day_str = ("Day:")				# Define string to request user input 
+day = 0					
 
 # Display Input on LCD Screen			
 lcd.clear()					# Clear LCD Screen
-lcd.message(date_str)				# Request User Input
-date_str_length = len(date_str) 		# Find Length of user input request string
-lcd.set_cursor(date_str_length,0) 			# Set Cursor to be after string - awaiting input
+lcd.message(day_str)				# Request User Input
+day_str_length = len(day_str) 			# Find Length of user input request string
+lcd.set_cursor(day_str_length,0) 		# Set Cursor to be after string - awaiting input
 
 # Repeat process until select is pressed
 while lcd.is_pressed(LCD.SELECT) == False:  	# Waits for User to Press Select
-	lcd.set_cursor(date_str_length+1,0)	# Set Cursor to be after string - awaiting input
+	lcd.set_cursor(day_str_length+1,0)	# Set Cursor to be after string - awaiting input
 
 	if lcd.is_pressed(LCD.UP): 		# While up button is pressed but not released
 		while lcd.is_pressed(LCD.UP):
 			pass
         	x = x + 1			# Increases internal Variable	
 		lcd.message('    ');		# Clear variable before printing new one
-		lcd.set_cursor(date_str_length+1,0)	# Set Cursor to be after string
+		lcd.set_cursor(day_str_length+1,0)	# Set Cursor to be after string
 		lcd.message(str(x)) 		# Prints internal variable on LCD Screen
 		time.sleep(0.1)			# Crappy debouncing
         
@@ -159,7 +159,7 @@ while lcd.is_pressed(LCD.SELECT) == False:  	# Waits for User to Press Select
 			pass
         	x = (x-1) if (x > 0) else 0	# Decreases internal variable
 		lcd.message('    ');		# Clear variable before printing new one
-		lcd.set_cursor(date_str_length+1,0)	# Set Cursor to be after string
+		lcd.set_cursor(day_str_length+1,0)	# Set Cursor to be after string
 		lcd.message(str(x)) 		# Prints internal variable on LCD Screen
 		time.sleep(0.1)			# Crappy debouncing
 
@@ -167,11 +167,11 @@ while lcd.is_pressed(LCD.SELECT) == False:  	# Waits for User to Press Select
 while lcd.is_pressed(LCD.SELECT) == True:
 	pass
 
-date = x
+day = x
 print("Training Date is:")			# Prints String to Terminal
-print(date)       				# Prints internal variable to the Terminal
+print(day)       				# Prints internal variable to the Terminal
 
-# End of Training Date Input
+# End of Training Day Input
 
 ##################################################
 
@@ -183,7 +183,7 @@ degrees = 0;
 lcd.clear()					# Clear LCD Screen
 lcd.message(degrees_str)			# Request User Input
 degrees_str_length = len(degrees_str) 		# Find Length of user input request string
-lcd.set_cursor(degrees_str_length,0) 			# Set Cursor to be after string - awaiting input
+lcd.set_cursor(degrees_str_length,0) 		# Set Cursor to be after string - awaiting input
 
 # Repeat process until select is pressed
 while lcd.is_pressed(LCD.SELECT) == False:  	# Waits for User to Press Select
@@ -214,6 +214,20 @@ while lcd.is_pressed(LCD.SELECT) == True:
 degrees = x
 print("Degree interval is:")			# Prints String to Terminal
 print(degrees)       				# Prints internal variable to the Terminal
+
+# Logging
+
+# Opening file
+fName = time.strftime("%y%m%d") + "_rat" + str(rat_num) + "_day" + str(day) + "_training.dat"
+f = open(fName, "a")
+
+# Writes general trial info including timestamp
+f.write('\nglobal | rat={},day={}\n'.format(rat_num,day))
+f.write('\nglobal | year={},month={},date={},hour={},min={},sec={}\n'.format(time.strftime('%Y'),time.strftime('%m'),time.strftime('%d'),time.strftime('%H'),time.strftime('%M'),time.strftime('%S')))
+
+
+
+f.close()
 
 # Below here is all from Dr. Madhav's code
 			
