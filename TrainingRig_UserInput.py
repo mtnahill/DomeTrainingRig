@@ -84,6 +84,7 @@ print(laps)        				# Prints the number of laps to the Terminal
 
 # End of Laps Input
 
+##################################################
 # Start Rat Number Input			# RAT NUMBER INPUT
 x = 0						# Define internal variable
 rat_num_str = ("Rat Number:")			# Define string to request user input 
@@ -174,8 +175,45 @@ print(date)       				# Prints internal variable to the Terminal
 
 ##################################################
 
+x = 0
 degrees_str = ("Enter Degrees:")
+degrees = 0;
 
+# Display Input on LCD Screen			
+lcd.clear()					# Clear LCD Screen
+lcd.message(degrees_str)			# Request User Input
+degrees_str_length = len(degrees_str) 		# Find Length of user input request string
+lcd.set_cursor(degrees_str_length,0) 			# Set Cursor to be after string - awaiting input
+
+# Repeat process until select is pressed
+while lcd.is_pressed(LCD.SELECT) == False:  	# Waits for User to Press Select
+	lcd.set_cursor(degrees_str_length+1,0)	# Set Cursor to be after string - awaiting input
+
+	if lcd.is_pressed(LCD.UP): 		# While up button is pressed but not released
+		while lcd.is_pressed(LCD.UP):
+			pass
+        	x = x + 1			# Increases internal Variable	
+		lcd.message('   ');		# Clear variable before printing new one
+		lcd.set_cursor(degrees_str_length+1,0)	# Set Cursor to be after string
+		lcd.message(str(x)) 		# Prints internal variable on LCD Screen
+		time.sleep(0.1)			# Crappy debouncing
+        
+	elif lcd.is_pressed(LCD.DOWN): 		# While down button is pressed but not released
+		while lcd.is_pressed(LCD.DOWN):
+			pass
+        	x = (x-1) if (x > 0) else 0	# Decreases internal variable
+		lcd.message('   ');		# Clear variable before printing new one
+		lcd.set_cursor(degrees_str_length+1,0)	# Set Cursor to be after string
+		lcd.message(str(x)) 		# Prints internal variable on LCD Screen
+		time.sleep(0.1)			# Crappy debouncing
+
+# Wait for select to be released
+while lcd.is_pressed(LCD.SELECT) == TRUE:
+	pass
+
+degrees = x
+print("Degree interval is:")			# Prints String to Terminal
+print(degrees)       				# Prints internal variable to the Terminal
 
 # Below here is all from Dr. Madhav's code
 			
