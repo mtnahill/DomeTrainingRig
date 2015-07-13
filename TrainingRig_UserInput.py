@@ -43,7 +43,7 @@ while False:
 
 # Set Variables
 x = 0 						# Counter internal loop variable
-laps_str = ('Enter Laps:')
+laps_str = ('Laps:')
 laps = 1
 
 # Display Input on LCD Screen			# LAPS INPUT
@@ -60,7 +60,7 @@ while lcd.is_pressed(LCD.SELECT) == False:  	# Waits for User to Press Select
 		while lcd.is_pressed(LCD.UP):
 			pass
         	x = x + 1			# Increases internal Variable	
-		lcd.message('   ');		# Clear variable before printing new one
+		lcd.message('    ');		# Clear variable before printing new one
 		lcd.set_cursor(laps_str_length+1,0)	# Set Cursor to be after string
 		lcd.message(str(x)) 		# Prints internal variable on LCD Screen
 		time.sleep(0.1)			# Crappy debouncing
@@ -69,13 +69,13 @@ while lcd.is_pressed(LCD.SELECT) == False:  	# Waits for User to Press Select
 		while lcd.is_pressed(LCD.DOWN):
 			pass
         	x = (x-1) if (x > 1) else 1	# Decreases internal variable
-		lcd.message('   ');		# Clear variable before printing new one
+		lcd.message('    ');		# Clear variable before printing new one
 		lcd.set_cursor(laps_str_length+1,0)	# Set Cursor to be after string
 		lcd.message(str(x)) 		# Prints internal variable on LCD Screen
 		time.sleep(0.1)			# Crappy debouncing
 
 # Wait for select to be released
-while lcd.is_pressed(LCD.SELECT) == TRUE:
+while lcd.is_pressed(LCD.SELECT) == True:
 	pass
 
 laps = x if (x > 0) else 1
@@ -87,7 +87,7 @@ print(laps)        				# Prints the number of laps to the Terminal
 ##################################################
 # Start Rat Number Input			# RAT NUMBER INPUT
 x = 0						# Define internal variable
-rat_num_str = ("Rat Number:")			# Define string to request user input 
+rat_num_str = ("Rat Num:")			# Define string to request user input 
 rat_num = 0		
 
 # Display Input on LCD Screen			
@@ -104,7 +104,7 @@ while lcd.is_pressed(LCD.SELECT) == False:  	# Waits for User to Press Select
 		while lcd.is_pressed(LCD.UP):
 			pass
         	x = x + 1			# Increases internal Variable	
-		lcd.message('   ')		# Clear variable before printing new one
+		lcd.message('    ')		# Clear variable before printing new one
 		lcd.set_cursor(rat_num_str_length+1,0)	# Set Cursor to be after string
 		lcd.message(str(x)) 		# Prints internal variable on LCD Screen
 		time.sleep(0.1)			# Crappy debouncing
@@ -113,13 +113,13 @@ while lcd.is_pressed(LCD.SELECT) == False:  	# Waits for User to Press Select
 		while lcd.is_pressed(LCD.DOWN):
 			pass
         	x = (x-1) if (x > 0) else 0	# Decreases internal variable
-		lcd.message('   ')		# Clear variable before printing new one
+		lcd.message('    ')		# Clear variable before printing new one
 		lcd.set_cursor(rat_num_str_length+1,0)	# Set Cursor to be after string
 		lcd.message(str(x)) 		# Prints internal variable on LCD Screen
 		time.sleep(0.1)			# Crappy debouncing
 
 # Wait for select to be released
-while lcd.is_pressed(LCD.SELECT) == TRUE:
+while lcd.is_pressed(LCD.SELECT) == True:
 	pass
 
 rat_num = x
@@ -132,7 +132,7 @@ print(rat_num)        				# Prints internal variable to the Terminal
 
 # Start Training Day Input			# TRAINING DAY INPUT
 x = 0						# Define internal variable
-date_str = ("Training Day:")			# Define string to request user input 
+date_str = ("Day:")				# Define string to request user input 
 date = 0					# Define array to store rat number
 
 # Display Input on LCD Screen			
@@ -149,7 +149,7 @@ while lcd.is_pressed(LCD.SELECT) == False:  	# Waits for User to Press Select
 		while lcd.is_pressed(LCD.UP):
 			pass
         	x = x + 1			# Increases internal Variable	
-		lcd.message('   ');		# Clear variable before printing new one
+		lcd.message('    ');		# Clear variable before printing new one
 		lcd.set_cursor(date_str_length+1,0)	# Set Cursor to be after string
 		lcd.message(str(x)) 		# Prints internal variable on LCD Screen
 		time.sleep(0.1)			# Crappy debouncing
@@ -158,13 +158,13 @@ while lcd.is_pressed(LCD.SELECT) == False:  	# Waits for User to Press Select
 		while lcd.is_pressed(LCD.DOWN):
 			pass
         	x = (x-1) if (x > 0) else 0	# Decreases internal variable
-		lcd.message('   ');		# Clear variable before printing new one
+		lcd.message('    ');		# Clear variable before printing new one
 		lcd.set_cursor(date_str_length+1,0)	# Set Cursor to be after string
 		lcd.message(str(x)) 		# Prints internal variable on LCD Screen
 		time.sleep(0.1)			# Crappy debouncing
 
 # Wait for select to be released
-while lcd.is_pressed(LCD.SELECT) == TRUE:
+while lcd.is_pressed(LCD.SELECT) == True:
 	pass
 
 date = x
@@ -176,7 +176,7 @@ print(date)       				# Prints internal variable to the Terminal
 ##################################################
 
 x = 0
-degrees_str = ("Enter Degrees:")
+degrees_str = ("Degrees:")
 degrees = 0;
 
 # Display Input on LCD Screen			
@@ -193,7 +193,7 @@ while lcd.is_pressed(LCD.SELECT) == False:  	# Waits for User to Press Select
 		while lcd.is_pressed(LCD.UP):
 			pass
         	x = x + 1			# Increases internal Variable	
-		lcd.message('   ');		# Clear variable before printing new one
+		lcd.message('    ');		# Clear variable before printing new one
 		lcd.set_cursor(degrees_str_length+1,0)	# Set Cursor to be after string
 		lcd.message(str(x)) 		# Prints internal variable on LCD Screen
 		time.sleep(0.1)			# Crappy debouncing
@@ -202,13 +202,13 @@ while lcd.is_pressed(LCD.SELECT) == False:  	# Waits for User to Press Select
 		while lcd.is_pressed(LCD.DOWN):
 			pass
         	x = (x-1) if (x > 0) else 0	# Decreases internal variable
-		lcd.message('   ');		# Clear variable before printing new one
+		lcd.message('    ');		# Clear variable before printing new one
 		lcd.set_cursor(degrees_str_length+1,0)	# Set Cursor to be after string
 		lcd.message(str(x)) 		# Prints internal variable on LCD Screen
 		time.sleep(0.1)			# Crappy debouncing
 
 # Wait for select to be released
-while lcd.is_pressed(LCD.SELECT) == TRUE:
+while lcd.is_pressed(LCD.SELECT) == True:
 	pass
 
 degrees = x
