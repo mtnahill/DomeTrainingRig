@@ -2,19 +2,24 @@
 # Takes the input of:
 # Rat Number
 # Training Day
-
-# Pressing the up button increases the number 0-9
-# Pressing select moves the number to the next digit place.  
+# Degree interval
 
 #!/usr/bin/python
-# Example using a character LCD plate.
 import math
 import time
-import serial # new
+import RPi.GPIO as GPIO
+import serial
 import Adafruit_CharLCD as LCD
 
 # Initialize the LCD using the pins 
 lcd = LCD.Adafruit_CharLCDPlate()
+
+# Declare pin numbering mode
+GPIO.setmode(GPIO.BOARD)
+
+# Setup GPIO pin for pulsing the motor
+motorPin = 11
+GPIO.setup(motorPin, GPIO.OUT)
 
 # Set backlight color to Blue
 lcd.set_color(0.0, 0.0, 1.0)
@@ -27,17 +32,14 @@ buttons = ( (LCD.SELECT, 'Select', (1,1,1)),
             (LCD.DOWN,   'Down'  , (0,1,0)),
             (LCD.RIGHT,  'Right' , (1,0,1)) )
 
-print("Press Ctrl-C to quit.")
+# Sends a pulse to the motor for duration 'dur'
+def pulseMotor(dur):
+	GPIO.output(motorPin, True)
+	time.sleep(dur)
+	GPIO.output(motorPin, False)
+	return
 
-# Testing code
-while False:
-	# Loop through each button and check if it is pressed.
-	for button in buttons:
-		if lcd.is_pressed(button[0]):
-			# Button is pressed, change the message and backlight.
-			lcd.clear()
-			lcd.message(button[1])
-			lcd.set_color(button[2][0], button[2][1], button[2][2])
+print("Press Ctrl-C to quit.")
 
 # Start Laps Input.
 
@@ -215,61 +217,85 @@ degrees = x
 print("Degree interval is:")			# Prints String to Terminal
 print(degrees)       				# Prints internal variable to the Terminal
 
-# Logging
+# Logging setup
+logBase = 'logs/'
 
 # Opening file
-fName = time.strftime("%y%m%d") + "_rat" + str(rat_num) + "_day" + str(day) + "_training.dat"
+fName = logBase + time.strftime("%y%m%d") + "_rat" + str(rat_num) + "_day" + str(day) + "_training.dat"
 f = open(fName, "a")
 
 # Writes general trial info including timestamp
 f.write('\nglobal | rat={},day={}\n'.format(rat_num,day))
 f.write('\nglobal | year={},month={},date={},hour={},min={},sec={}\n'.format(time.strftime('%Y'),time.strftime('%m'),time.strftime('%d'),time.strftime('%H'),time.strftime('%M'),time.strftime('%S')))
 
+# Sets initial current lap and angle of last drop
+currLap = 0
+angPrev = 0
+pulseDur = 2 # Seconds
 
+# Until the rat has run the specified number of laps
+while currLap < laps:
+
+	angle = 0 # TEMP, replace with real input 
+	
+	# If the current angle is within three degrees of the target angle
+	if math.fmod(angle, degrees) <= 3 && abs(angPrev - angle) > degrees/2
+		# Store the previous angle
+		angPrev = angle
+
+		# Send a 2 second pulse to the motor
+		pulseMotor(pulseDur)
+		
+	currLap = math.floor(angle / 8192)
+	
+
+	
 
 f.close()
 
-# Below here is all from Dr. Madhav's code
-			
-last_received = ''
-buffer = ''
 
-if __name__ ==  '__main__':
-    rat = input("Enter rat number: ")
-    day = input("Enter training day: ")
-
-    fileName = time.strftime("%y%m%d")
-    f = open(fileName + "_rat"+str(rat) + "_day"+ str(day) + "_training.dat",'w')
-
-    f.write('\nglobal | rat=%d,day=%d\n' % (rat,day))
-    f.write('\nglobal | year=%s,month=%s,date=%s,hour=%s,min=%s,sec=%s\n' % (time.strftime('%Y'),time.strftime('%m'),time.strftime('%d'),time.strftime('%H'),time.strftime('%M'),time.strftime('%S')))
-
-    lap = 0; 
-    ser = serial.Serial('/dev/tty.usbserial-A600aeCg',9600)
-    print("Starting run...\n")
-
-    run = 1;
-    while run:
-        # last_received = ser.readline()
-        buffer += ser.read(ser.inWaiting()).decode('ascii','ignore') 
-
-        if '\n' in buffer:
-            last_received, buffer = buffer.split('\n')[-2:]
-            f.write(last_received+"\n")
-
-        if 'global' in last_received:
-            print(last_received+"\n")
-            
-        if 'theta=' in last_received:
-            theta = int(last_received.split('theta=')[1])
-            nlap = math.floor(theta/8192);
-            if nlap>lap:
-                lap = nlap;
-                print("Lap %d\n" % lap)
-
-        if last_received=='#':
-            f.close();
-            run = 0;
-# End Dr. Madhav Code
-
-
+## Below here is all from Dr. Madhav's code
+#			
+#last_received = ''
+#buffer = ''
+#
+#if __name__ ==  '__main__':
+#    rat = input("Enter rat number: ")
+#    day = input("Enter training day: ")
+#
+#    fileName = time.strftime("%y%m%d")
+#    f = open(fileName + "_rat"+str(rat) + "_day"+ str(day) + "_training.dat",'w')
+#
+#    f.write('\nglobal | rat=%d,day=%d\n' % (rat,day))
+#    f.write('\nglobal | year=%s,month=%s,date=%s,hour=%s,min=%s,sec=%s\n' % (time.strftime('%Y'),time.strftime('%m'),time.strftime('%d'),time.strftime('%H'),time.strftime('%M'),time.strftime('%S')))
+#
+#    lap = 0; 
+#    ser = serial.Serial('/dev/tty.usbserial-A600aeCg',9600)
+#    print("Starting run...\n")
+#
+#    run = 1;
+#    while run:
+#        # last_received = ser.readline()
+#        buffer += ser.read(ser.inWaiting()).decode('ascii','ignore') 
+#
+#        if '\n' in buffer:
+#            last_received, buffer = buffer.split('\n')[-2:]
+#            f.write(last_received+"\n")
+#
+#        if 'global' in last_received:
+#            print(last_received+"\n")
+#            
+#        if 'theta=' in last_received:
+#            theta = int(last_received.split('theta=')[1])
+#            nlap = math.floor(theta/8192);
+#            if nlap>lap:
+#                lap = nlap;
+#                print("Lap %d\n" % lap)
+#
+#        if last_received=='#':
+#            f.close();
+#            run = 0;
+#
+## End Dr. Madhav Code
+#
+#
