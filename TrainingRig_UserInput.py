@@ -1,10 +1,7 @@
 # coding: utf-8
-# Takes the input of:
-# Rat Number
-# Training Day
-# Degree interval
-
 #!/usr/bin/python
+
+# Takes user inputted details 
 import math
 import time
 import RPi.GPIO as GPIO
@@ -17,9 +14,15 @@ lcd = LCD.Adafruit_CharLCDPlate()
 # Declare pin numbering mode
 GPIO.setmode(GPIO.BOARD)
 
-# Setup GPIO pin for pulsing the motor
+# Setup GPIO pins for motor pulsing and encoder reading
 motorPin = 11
+encoderPinA = 13
+encoderPinB = 15
+buttonPin = 16
 GPIO.setup(motorPin, GPIO.OUT)
+GPIO.setup(encoderPinA, GPIO.IN)
+GPIO.setup(encoderPinB, GPIO.IN)
+GPIO.setup(buttonPin, GPIO.IN)
 
 # Set backlight color to Blue
 lcd.set_color(0.0, 0.0, 1.0)
@@ -177,9 +180,12 @@ print(day)       				# Prints internal variable to the Terminal
 
 ##################################################
 
+# Get dTheta0
+
+# Set variables
 x = 0
-degrees_str = ("Degrees:")
-degrees = 0;
+degrees_str = ("dTheta0:")
+dTheta0 = 0;
 
 # Display Input on LCD Screen			
 lcd.clear()					# Clear LCD Screen
@@ -213,11 +219,72 @@ while lcd.is_pressed(LCD.SELECT) == False:  	# Waits for User to Press Select
 while lcd.is_pressed(LCD.SELECT) == True:
 	pass
 
-degrees = x
-print("Degree interval is:")			# Prints String to Terminal
-print(degrees)       				# Prints internal variable to the Terminal
+dTheta0 = x
+print("dTheta0 is:")				# Prints String to Terminal
+print(dTheta0)       				# Prints internal variable to the Terminal
 
-# Logging setup
+# Get dTheta1
+
+# Set variables
+x = 0
+degrees_str = ("dTheta1:")
+dTheta1 = 0;
+
+# Display Input on LCD Screen			
+lcd.clear()					# Clear LCD Screen
+lcd.message(degrees_str)			# Request User Input
+degrees_str_length = len(degrees_str) 		# Find Length of user input request string
+lcd.set_cursor(degrees_str_length,0) 		# Set Cursor to be after string - awaiting input
+
+
+# Repeat process until select is pressed
+while lcd.is_pressed(LCD.SELECT) == False:  	# Waits for User to Press Select
+	lcd.set_cursor(degrees_str_length+1,0)	# Set Cursor to be after string - awaiting input
+
+	if lcd.is_pressed(LCD.UP): 		# While up button is pressed but not released
+		while lcd.is_pressed(LCD.UP):
+			pass
+        	x = x + 1			# Increases internal Variable	
+		lcd.message('    ');		# Clear variable before printing new one
+		lcd.set_cursor(degrees_str_length+1,0)	# Set Cursor to be after string
+		lcd.message(str(x)) 		# Prints internal variable on LCD Screen
+		time.sleep(0.1)			# Crappy debouncing
+        
+	elif lcd.is_pressed(LCD.DOWN): 		# While down button is pressed but not released
+		while lcd.is_pressed(LCD.DOWN):
+			pass
+        	x = (x-1) if (x > 0) else 0	# Decreases internal variable
+		lcd.message('    ');		# Clear variable before printing new one
+		lcd.set_cursor(degrees_str_length+1,0)	# Set Cursor to be after string
+		lcd.message(str(x)) 		# Prints internal variable on LCD Screen
+		time.sleep(0.1)			# Crappy debouncing
+
+# Wait for select to be released
+while lcd.is_pressed(LCD.SELECT) == True:
+	pass
+
+dTheta1 = x
+print("dTheta1 is:")				# Prints String to Terminal
+print(dTheta1)       				# Prints internal variable to the Terminal
+
+# End user input
+
+##################################################
+
+# Number of encoder readings per revolution
+thetaLap = 8192
+
+# Duration of motor per feeding
+pulseDur = 2
+
+# Converts values in degrees into values compatible with encoder readings, and prints info
+f.write('\nglobal | dTheta0={},dTheta1={},pulseDur={},goal={}'.format(dTheta0, dTheta1, pulseDur, goal))
+
+dTheta0 *= thetaLap / 360
+dTheta1 *= thetaLap / 360
+goal *= thetaLap
+
+# Local base path to log folder
 logBase = 'logs/'
 
 # Opening file
@@ -233,69 +300,24 @@ currLap = 0
 angPrev = 0
 pulseDur = 2 # Seconds
 
+
+# Begin running actual training program:
+
 # Until the rat has run the specified number of laps
-while currLap < laps:
-
-	angle = 0 # TEMP, replace with real input 
-	
-	# If the current angle is within three degrees of the target angle
-	if math.fmod(angle, degrees) <= 3 && abs(angPrev - angle) > degrees/2
-		# Store the previous angle
-		angPrev = angle
-
-		# Send a 2 second pulse to the motor
-		pulseMotor(pulseDur)
-		
-	currLap = math.floor(angle / 8192)
-	
-
+#while absTheta < goal
+#
+#	angle = 0 # TEMP, replace with real input 
+#	
+#	# If the current angle is within three degrees of the target angle
+#	if math.fmod(angle, dTheta0) <= 3 && abs(angPrev - angle) > dTheta0/2
+#		# Store the previous angle
+#		angPrev = angle
+#
+#		# Send a 2 second pulse to the motor
+#		pulseMotor(pulseDur)
+#		
+#	 # currLap = math.floor(angle / thetaLap)
 	
 
 f.close()
 
-
-## Below here is all from Dr. Madhav's code
-#			
-#last_received = ''
-#buffer = ''
-#
-#if __name__ ==  '__main__':
-#    rat = input("Enter rat number: ")
-#    day = input("Enter training day: ")
-#
-#    fileName = time.strftime("%y%m%d")
-#    f = open(fileName + "_rat"+str(rat) + "_day"+ str(day) + "_training.dat",'w')
-#
-#    f.write('\nglobal | rat=%d,day=%d\n' % (rat,day))
-#    f.write('\nglobal | year=%s,month=%s,date=%s,hour=%s,min=%s,sec=%s\n' % (time.strftime('%Y'),time.strftime('%m'),time.strftime('%d'),time.strftime('%H'),time.strftime('%M'),time.strftime('%S')))
-#
-#    lap = 0; 
-#    ser = serial.Serial('/dev/tty.usbserial-A600aeCg',9600)
-#    print("Starting run...\n")
-#
-#    run = 1;
-#    while run:
-#        # last_received = ser.readline()
-#        buffer += ser.read(ser.inWaiting()).decode('ascii','ignore') 
-#
-#        if '\n' in buffer:
-#            last_received, buffer = buffer.split('\n')[-2:]
-#            f.write(last_received+"\n")
-#
-#        if 'global' in last_received:
-#            print(last_received+"\n")
-#            
-#        if 'theta=' in last_received:
-#            theta = int(last_received.split('theta=')[1])
-#            nlap = math.floor(theta/8192);
-#            if nlap>lap:
-#                lap = nlap;
-#                print("Lap %d\n" % lap)
-#
-#        if last_received=='#':
-#            f.close();
-#            run = 0;
-#
-## End Dr. Madhav Code
-#
-#
