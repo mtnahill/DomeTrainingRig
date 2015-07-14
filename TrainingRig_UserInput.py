@@ -7,12 +7,10 @@ import time
 import RPi.GPIO as GPIO
 import serial
 import Adafruit_CharLCD as LCD
+import UserInput as UINPUT
 
 # Initialize the LCD using the pins 
 lcd = LCD.Adafruit_CharLCDPlate()
-
-# Declare pin numbering mode
-GPIO.setmode(GPIO.BOARD)
 
 # Setup GPIO pins for motor pulsing and encoder reading
 motorPin = 11
