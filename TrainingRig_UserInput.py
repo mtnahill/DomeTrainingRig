@@ -26,29 +26,33 @@ GPIO.setup(buttonPin, GPIO.IN)
 lcd.set_color(0.0, 0.0, 1.0)
 lcd.clear()
 
-# Sends a pulse to the motor for duration 'dur'
-def pulseMotor(dur):
-	GPIO.output(motorPin, True)
-	time.sleep(dur)
-	GPIO.output(motorPin, False)
-	return
+# Initialization of current angle, theta
+theta = 0
+
+# Triggered by an interrupt from pin A, this function modifies
+# the value of theta according to the encoder state
+def readEncoderA(ch):
+	global theta
+	theta += 1 # TEMP
+
+# Triggered by an interrupt from pin B, this function modifies
+# the value of theta according to the encoder state
+def readEncoderB(ch):
+	global theta
+	theta -= 1 # TEMP
+
+# Attach rising edge interrupts to pins A and B
+GPIO.add_event_detect(encoderPinA, GPIO.RISING, callback=readEncoderA)
+GPIO.add_event_detect(encoderPinB, GPIO.RISING, callback=readEncoderB)
 
 print("Press Ctrl-C to quit.")
 
-# Gets laps from the user with a minimum of 1 lap
+# Gets various fields from user (third argument specifies minimum input accepted)
 laps = UINPUT.genForm(lcd, 'Laps', 1)
-goal = laps * 360
-
-# Gets rat number from the user with a minimum number of 0
+goal = laps * 360 # Converting laps into goal degrees
 ratNum = UINPUT.genForm(lcd, 'Rat Num', 0)
-
-# Gets training day from the user with a minimum value of 0
 day = UINPUT.genForm(lcd, 'Day', 0)
-
-# Gets dTheta0 from the user with a minimum value of 0
 dTheta0 = UINPUT.genForm(lcd, 'dTheta0', 0)
-
-# Gets dTheta1 from the user with a minimum value of 0
 dTheta1 = UINPUT.genForm(lcd, 'dTheta1', 0)
 
 # Number of encoder readings per revolution
@@ -78,7 +82,6 @@ f.write('\nglobal | year={},month={},date={},hour={},min={},sec={}\n'.format(tim
 currLap = 0
 angPrev = 0
 pulseDur = 2 # Seconds
-
 
 # Begin running actual training program:
 
