@@ -28,13 +28,6 @@ GPIO.setup(buttonPin, GPIO.IN)
 lcd.set_color(0.0, 0.0, 1.0)
 lcd.clear()
 
-# Make list of button value, text, and backlight color.
-buttons = ( (LCD.SELECT, 'Select', (1,1,1)),
-            (LCD.LEFT,   'Left'  , (1,0,0)),
-            (LCD.UP,     'Up'    , (0,0,1)),
-            (LCD.DOWN,   'Down'  , (0,1,0)),
-            (LCD.RIGHT,  'Right' , (1,0,1)) )
-
 # Sends a pulse to the motor for duration 'dur'
 def pulseMotor(dur):
 	GPIO.output(motorPin, True)
