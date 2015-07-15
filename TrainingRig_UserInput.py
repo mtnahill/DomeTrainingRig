@@ -11,6 +11,7 @@ import UserInput as UINPUT
 
 # Initialize the LCD using the pins 
 lcd = LCD.Adafruit_CharLCDPlate()
+lcd.show_cursor(True)
 
 # Setup GPIO pins for motor pulsing and encoder reading
 motorPin = 11
@@ -54,6 +55,9 @@ ratNum = UINPUT.genForm(lcd, 'Rat Num', 0)
 day = UINPUT.genForm(lcd, 'Day', 0)
 dTheta0 = UINPUT.genForm(lcd, 'dTheta0', 0)
 dTheta1 = UINPUT.genForm(lcd, 'dTheta1', 0)
+
+# Stop showing cursor on screen
+lcd.show_cursor(False)
 
 # Number of encoder readings per revolution
 thetaLap = 8192
