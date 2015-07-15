@@ -14,14 +14,16 @@ lcd = LCD.Adafruit_CharLCDPlate()
 lcd.show_cursor(True)
 
 # Setup GPIO pins for motor pulsing and encoder reading
-motorPin = 11
-encoderPinA = 13
-encoderPinB = 15
-buttonPin = 16
+motorPin = 17
+ledPin = 18
+buttonPin = 25 
+encoderPinA = 22
+encoderPinB = 23
 GPIO.setup(motorPin, GPIO.OUT)
+GPIO.setup(ledPin, GPIO.OUT)
+GPIO.setup(buttonPin, GPIO.IN)
 GPIO.setup(encoderPinA, GPIO.IN)
 GPIO.setup(encoderPinB, GPIO.IN)
-GPIO.setup(buttonPin, GPIO.IN)
 
 # Set backlight color to Blue
 lcd.set_color(0.0, 0.0, 1.0)
@@ -94,14 +96,14 @@ fName = logBase + time.strftime("%y%m%d") + "_rat" + str(ratNum) + "_day" + str(
 f = open(fName, "a")
 
 # Prints info, then converts values in degrees into values compatible with encoder readings
-f.write('\nglobal | dTheta0={},dTheta1={},pulseDur={},goal={}'.format(dTheta0, dTheta1, pulseDur, goal))
+f.write('\nglobal | dTheta0={},dTheta1={},pulseDur={},goal={}\n'.format(dTheta0, dTheta1, pulseDur, goal))
 dTheta0 = toEnc(dTheta0)
 dTheta1 = toEnc(dTheta1)
 goal *= thetaLap
 
 # Writes general trial info including timestamp
-f.write('\nglobal | rat={},day={}\n'.format(ratNum,day))
-f.write('\nglobal | year={},month={},date={},hour={},min={},sec={}\n'.format(time.strftime('%Y'),time.strftime('%m'),time.strftime('%d'),time.strftime('%H'),time.strftime('%M'),time.strftime('%S')))
+f.write('global | rat={},day={}\n'.format(ratNum,day))
+f.write('global | year={},month={},date={},hour={},min={},sec={}\n\n'.format(time.strftime('%Y'),time.strftime('%m'),time.strftime('%d'),time.strftime('%H'),time.strftime('%M'),time.strftime('%S')))
 
 # Begin running actual training program:
 isFeeding = False # Whether or not the motor is currently pulsing
@@ -112,7 +114,7 @@ tInit = time.time() # Establish offset time
 # Until the rat has run the specified number of laps
 while theta < goal:
 	tCurr = int(math.floor((time.time() - tInit) * 1000)) # Grabs current time in milliseconds
-	print('data | time={},theta={}\n'.format(tCurr, theta))
+	f.write('data | time={},theta={}\n'.format(tCurr, theta))
 	
 	# Arrived at feeding location
 	if not isFeeding and theta >= nextFeedAng:
@@ -128,6 +130,8 @@ while theta < goal:
 
 	# End of feeding period
 	elif isFeeding and tCurr - feedStart >= pulseDur:
+		isFeeding = False
+
 		# Stop pulsing motor
 		GPIO.output(ledPin, False)
 		GPIO.output(motorPin, False)
