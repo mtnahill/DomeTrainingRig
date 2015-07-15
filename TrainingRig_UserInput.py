@@ -39,7 +39,7 @@ def readEncoderA(ch):
 	global theta
 	
 	# Check direction of encoder turning
-	if GPIO.input(encoderPinB) == False
+	if GPIO.input(encoderPinB) == False:
 		theta += 1 #CW
 
 # Triggered by an interrupt from pin B, this function modifies
@@ -48,7 +48,7 @@ def readEncoderB(ch):
 	global theta
 
 	# Check direction of encoder turning 
-	if GPIO.input(encoderPinA) == False
+	if GPIO.input(encoderPinA) == False:
 		theta -= 1 # CCW
 
 # Converts encoder angle to degrees
@@ -104,7 +104,7 @@ f.write('\nglobal | rat={},day={}\n'.format(ratNum,day))
 f.write('\nglobal | year={},month={},date={},hour={},min={},sec={}\n'.format(time.strftime('%Y'),time.strftime('%m'),time.strftime('%d'),time.strftime('%H'),time.strftime('%M'),time.strftime('%S')))
 
 # Begin running actual training program:
-isFeeding = False
+isFeeding = False # Whether or not the motor is currently pulsing
 feedStart = 0 # Contains the time at which the motor was started
 nextFeedAng = 0 # Stores next angle at which to begin feeding
 tInit = time.time() # Establish offset time
@@ -115,7 +115,7 @@ while theta < goal:
 	print('data | time={},theta={}\n'.format(tCurr, theta))
 	
 	# Arrived at feeding location
-	if (!isFeeding && theta >= nextFeedAng):
+	if not isFeeding and theta >= nextFeedAng:
 		feedStart = tCurr
 		isFeeding = True
 		
@@ -127,7 +127,7 @@ while theta < goal:
 		f.write('event | time={},feed=1\n'.format(tCurr))
 
 	# End of feeding period
-	elif isFeeding and tCurr - feedStart >= pulseDur
+	elif isFeeding and tCurr - feedStart >= pulseDur:
 		# Stop pulsing motor
 		GPIO.output(ledPin, False)
 		GPIO.output(motorPin, False)
