@@ -50,11 +50,17 @@ print("Press Ctrl-C to quit.")
 
 # Gets various fields from user (third argument specifies minimum input accepted)
 laps = UINPUT.genForm(lcd, 'Laps', 1)
+print('# of Laps: ' + str(laps))
 goal = laps * 360 # Converting laps into goal degrees
 ratNum = UINPUT.genForm(lcd, 'Rat Num', 0)
+print('Rat Num: ' + str(ratNum))
 day = UINPUT.genForm(lcd, 'Day', 0)
+print('Day: ' + str(day))
 dTheta0 = UINPUT.genForm(lcd, 'dTheta0', 0)
+print('dTheta0: ' + str(dTheta0))
 dTheta1 = UINPUT.genForm(lcd, 'dTheta1', 0)
+print('dTheta1: ' + str(dTheta1))
+
 
 # Stop showing cursor on screen
 lcd.show_cursor(False)

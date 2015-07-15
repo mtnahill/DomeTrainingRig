@@ -11,8 +11,9 @@ import Adafruit_CharLCD as LCD
 import time
 
 # Generic form function that takes <lcd>, the variable containing the display,
-# and <message>, to prompt the user (note that this should be the bare name 
-# of the field being requested, e.g. 'Day')
+# <message>, to prompt the user (note that this should be the bare name 
+# of the field being requested, e.g. 'Day'), and <minVal>, the minimum value
+# returned by the function, even if the user's input is lower
 def genForm(lcd, message, minVal):
 
 	# Initial variable states
@@ -81,7 +82,13 @@ def genForm(lcd, message, minVal):
 	while lcd.is_pressed(LCD.SELECT) == True:
 		pass
 
-	# formVal = x
-# 	print(message + ' is: ' + str(formVal))		# Prints feedback message to terminal   
+	# Try to convert input into integer
+	try:
+		formVal = int("".join(valStr)) 
+		formVal = formVal if formVal >= minVal else minVal
+	except ValueError:
+		# Recurse if there was an invalid entry
+		print('Invalid entry for ' + message + ': ' + "".join(valStr))
+		formVal = genForm(lcd, message, minVal)
 
-	return valStr 
+	return formVal
