@@ -22,8 +22,8 @@ encoderPinB = 23
 GPIO.setup(motorPin, GPIO.OUT)
 GPIO.setup(ledPin, GPIO.OUT)
 GPIO.setup(buttonPin, GPIO.IN)
-GPIO.setup(encoderPinA, GPIO.IN, pull_up_down = GPIO.PUD_DOWN)
-GPIO.setup(encoderPinB, GPIO.IN, pull_up_down = GPIO.PUD_DOWN)
+GPIO.setup(encoderPinA, GPIO.IN)
+GPIO.setup(encoderPinB, GPIO.IN)
 
 # Set backlight color to Blue
 lcd.set_color(0.0, 0.0, 1.0)
@@ -92,11 +92,11 @@ GPIO.add_event_detect(encoderPinB, GPIO.BOTH, callback = readEncoderB)
 
 # Converts encoder angle to degrees
 def toDeg(ang):
-	return ang / thetaLap * 360
+	return int(float(ang) / thetaLap * 360)
 
 # Converts degrees to encoder angle
 def toEnc(ang):
-	return ang / 360 * thetaLap
+	return int(float(ang) / 360 * thetaLap)
 
 lcd.clear()
 print("Press Ctrl-C to quit.")
@@ -133,7 +133,7 @@ f = open(fName, "a")
 f.write('\nglobal | dTheta0={},dTheta1={},pulseDur={},goal={}\n'.format(dTheta0, dTheta1, pulseDur, goal))
 dTheta0 = toEnc(dTheta0)
 dTheta1 = toEnc(dTheta1)
-goal *= thetaLap
+goal = toEnc(goal)
 
 # Writes general trial info including timestamp
 f.write('global | rat={},day={}\n'.format(ratNum,day))
@@ -172,7 +172,7 @@ while theta < goal:
 
 		# Calculate current interval between feedings and next feed angle
 		dTheta = dTheta0 + (dTheta1 - dTheta0) * theta / goal
-		nextFeedAng = theta + dTheta + random.randint(-455, 455)
+		nextFeedAng = theta + dTheta #+ random.randint(-455, 455)
 	
 		# Write disable to log
 		f.write('event | time={},feed=0\n'.format(tCurr))	
@@ -181,7 +181,10 @@ while theta < goal:
 
 # Update time and write end of session to file
 tCurr = int(math.floor((time.time() - tInit) * 1000))
-f.write('event | time={},goal=1\n#\n', tCurr)
+f.write('event | time={},goal=1\n#\n'.format(tCurr))
 
+# Turn motor off if it's on
+GPIO.output(motorPin, False)
+GPIO.output(ledPin, False)
 f.close()
-
+exit(0)
