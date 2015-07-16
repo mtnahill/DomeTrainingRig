@@ -35,23 +35,60 @@ theta = 0
 # Number of encoder readings per revolution
 thetaLap = 8192
 
-# Triggered by an interrupt from pin A, this function modifies
+# Triggered by an edge on pin A, this function modifies
 # the value of theta according to the encoder state
 def readEncoderA(ch):
 	global theta
 	
-	# Check direction of encoder turning
-	if GPIO.input(encoderPinB) == False:
-		theta += 1 #CW
+	# Grab readings from the pins
+	aState = GPIO.input(encoderPinA)
+	bState = GPIO.input(encoderPinB)
 
-# Triggered by an interrupt from pin B, this function modifies
+	# Look for rising edge on A
+	if aState == True:
+		# Check direction of encoder turning
+		if bState == False:
+			theta += 1 # CW
+		else:
+			theta -= 1 # CCW
+
+	# There's a falling edge on A
+	else:
+		# Check direction of encoder turning
+		if bState == True:
+			theta += 1 # CW
+		else:
+			theta -= 1 # CCW
+
+# Triggered by an edge on pin B, this function modifies
 # the value of theta according to the encoder state
 def readEncoderB(ch):
 	global theta
+	
+	# Grab readings from the pins
+	aState = GPIO.input(encoderPinA)
+	bState = GPIO.input(encoderPinB)
 
-	# Check direction of encoder turning 
-	if GPIO.input(encoderPinA) == False:
-		theta -= 1 # CCW
+	# Look for rising edge on B
+	if bState == True:
+		# Check direction of encoder turning
+		if aState == True:
+			theta += 1 # CW
+		else:
+			theta -= 1 # CCW
+
+	# There's a falling edge on B
+	else:
+		# Check direction of encoder turning
+		if aState == False:
+			theta += 1 # CW
+		else:
+			theta -= 1 # CCW
+
+
+# Attach interrupts to pins A and B
+GPIO.add_event_detect(encoderPinA, GPIO.BOTH, callback = readEncoderA)
+GPIO.add_event_detect(encoderPinB, GPIO.BOTH, callback = readEncoderB)
 
 # Converts encoder angle to degrees
 def toDeg(ang):
@@ -61,10 +98,7 @@ def toDeg(ang):
 def toEnc(ang):
 	return ang / 360 * thetaLap
 
-# Attach rising edge interrupts to pins A and B
-GPIO.add_event_detect(encoderPinA, GPIO.RISING, callback=readEncoderA)
-GPIO.add_event_detect(encoderPinB, GPIO.RISING, callback=readEncoderB)
-
+lcd.clear()
 print("Press Ctrl-C to quit.")
 
 # Gets various fields from user (third argument specifies minimum input accepted)
