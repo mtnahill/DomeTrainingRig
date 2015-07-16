@@ -172,7 +172,7 @@ while theta < goal:
 
 		# Calculate current interval between feedings and next feed angle
 		dTheta = dTheta0 + (dTheta1 - dTheta0) * theta / goal
-		nextFeedAng = theta + dTheta #+ random.randint(-455, 455)
+		nextFeedAng = theta + dTheta + random.randint(-455, 455)
 	
 		# Write disable to log
 		f.write('event | time={},feed=0\n'.format(tCurr))	
