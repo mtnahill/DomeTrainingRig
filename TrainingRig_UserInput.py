@@ -22,8 +22,8 @@ encoderPinB = 23
 GPIO.setup(motorPin, GPIO.OUT)
 GPIO.setup(ledPin, GPIO.OUT)
 GPIO.setup(buttonPin, GPIO.IN)
-GPIO.setup(encoderPinA, GPIO.IN)
-GPIO.setup(encoderPinB, GPIO.IN)
+GPIO.setup(encoderPinA, GPIO.IN, pull_up_down = GPIO.PUD_DOWN)
+GPIO.setup(encoderPinB, GPIO.IN, pull_up_down = GPIO.PUD_DOWN)
 
 # Set backlight color to Blue
 lcd.set_color(0.0, 0.0, 1.0)
