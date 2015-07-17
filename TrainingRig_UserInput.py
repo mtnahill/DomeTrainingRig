@@ -1,8 +1,19 @@
 # coding: utf-8
 #!/usr/bin/python
 
-# Takes user inputted details 
+# This script takes user specified details containing:
+# Laps - the number of laps to run the program for
+# Rat number - the current rat's identification number
+# Training day - the current day of training
+# dTheta0 - the initial angle interval between feedings
+# dTheta1 - the final angle interval between feedings
+#
+# Across the trial, the angle interval between feedings is
+# transitioned linearly from dTheta0 to dTheta1 with 
+# +- 20deg randomness
+
 import math
+import socket
 import time
 import random
 import RPi.GPIO as GPIO
@@ -101,6 +112,20 @@ def toEnc(ang):
 lcd.clear()
 print("Press Ctrl-C to quit.")
 
+# Show welcome screen with ip
+s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+s.connect(('8.8.8.8', 0))
+ipAdd = s.getsockname()[0]
+lcd.message('Welcome! IP is:\n{}'.format(ipAdd))
+
+# Wait for select to be pressed
+while not lcd.is_pressed(LCD.SELECT):
+	pass
+
+# Wait for select to be released
+while lcd.is_pressed(LCD.SELECT):
+	time.sleep(0.1)
+
 # Gets various fields from user (third argument specifies minimum input accepted)
 laps = UINPUT.genForm(lcd, 'Laps', 1)
 print('# of Laps: ' + str(laps))
@@ -114,7 +139,9 @@ print('dTheta0: ' + str(dTheta0))
 dTheta1 = UINPUT.genForm(lcd, 'dTheta1', 0)
 print('dTheta1: ' + str(dTheta1))
 
+# Clear display and set color to red for trial
 lcd.clear()
+lcd.set_color(1.0, 0.0, 0.0)
 
 # Stop showing cursor on screen
 lcd.show_cursor(False)
