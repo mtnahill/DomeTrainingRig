@@ -60,17 +60,17 @@ def readEncoderA(ch):
 	if aState == True:
 		# Check direction of encoder turning
 		if bState == False:
-			theta += 1 # CW
+			theta -= 1 # CW
 		else:
-			theta -= 1 # CCW
+			theta += 1 # CCW
 
 	# There's a falling edge on A
 	else:
 		# Check direction of encoder turning
 		if bState == True:
-			theta += 1 # CW
+			theta -= 1 # CW
 		else:
-			theta -= 1 # CCW
+			theta += 1 # CCW
 
 # Triggered by an edge on pin B, this function modifies
 # the value of theta according to the encoder state
@@ -85,17 +85,17 @@ def readEncoderB(ch):
 	if bState == True:
 		# Check direction of encoder turning
 		if aState == True:
-			theta += 1 # CW
+			theta -= 1 # CW
 		else:
-			theta -= 1 # CCW
+			theta += 1 # CCW
 
 	# There's a falling edge on B
 	else:
 		# Check direction of encoder turning
 		if aState == False:
-			theta += 1 # CW
+			theta -= 1 # CW
 		else:
-			theta -= 1 # CCW
+			theta += 1 # CCW
 
 
 # Attach interrupts to pins A and B
