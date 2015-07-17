@@ -12,13 +12,14 @@ import time
 
 # Generic form function that takes <lcd>, the variable containing the display,
 # <message>, to prompt the user (note that this should be the bare name 
-# of the field being requested, e.g. 'Day'), and <minVal>, the minimum value
+# of the field being requested, e.g. 'Day'), <valStr>, a string containing the previous
+# value entered for the field and <minVal>, the minimum value
 # returned by the function, even if the user's input is lower
-def genForm(lcd, message, minVal):
+def genForm(lcd, message, valStr, minVal):
 
 	# Initial variable states
 	valIndex = 0
-	valStr = list("0    ")				# String with which to display value to user
+	valStr = list(valStr)				# Get a list from the stored string
 
 	# Display Input on LCD Screen			
 	lcd.clear()					# Clear LCD Screen

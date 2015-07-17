@@ -14,6 +14,7 @@
 
 import math
 import socket
+import csv
 import time
 import random
 import RPi.GPIO as GPIO
@@ -126,18 +127,43 @@ while not lcd.is_pressed(LCD.SELECT):
 while lcd.is_pressed(LCD.SELECT):
 	time.sleep(0.1)
 
+# Default string values
+lapsStr = "0    "
+ratStr = "0    "
+dayStr = "0    "
+dTheta0Str = "0    "
+dTheta1Str = "0    "
+
+# Loading previous entries from params file
+paramsFile = 'params.csv'
+try:
+	f = open(paramsFile, 'r+')
+	params = next(csv.reader(f, delimiter=','))
+	lapsStr = params[0]
+	ratStr = params[1]
+	dayStr = params[2]
+	dTheta0Str = params[3]
+	dTheta1Str = params[4]
+except:
+	f = open(paramsFile, 'w') # Create the file
+
 # Gets various fields from user (third argument specifies minimum input accepted)
-laps = UINPUT.genForm(lcd, 'Laps', 1)
+laps = UINPUT.genForm(lcd, 'Laps', lapsStr, 1)
 print('# of Laps: ' + str(laps))
 goal = laps * 360 # Converting laps into goal degrees
-ratNum = UINPUT.genForm(lcd, 'Rat Num', 0)
+ratNum = UINPUT.genForm(lcd, 'Rat Num', ratStr, 0)
 print('Rat Num: ' + str(ratNum))
-day = UINPUT.genForm(lcd, 'Day', 0)
+day = UINPUT.genForm(lcd, 'Day', dayStr, 0)
 print('Day: ' + str(day))
-dTheta0 = UINPUT.genForm(lcd, 'dTheta0', 0)
+dTheta0 = UINPUT.genForm(lcd, 'dTheta0', dTheta0Str, 0)
 print('dTheta0: ' + str(dTheta0))
-dTheta1 = UINPUT.genForm(lcd, 'dTheta1', 0)
+dTheta1 = UINPUT.genForm(lcd, 'dTheta1', dTheta1Str, 0)
 print('dTheta1: ' + str(dTheta1))
+
+# Write new parameters to file
+f.seek(0)
+f.write('{:<5},{:<5},{:<5},{:<5},{:<5}'.format(str(laps), str(ratNum), str(day), str(dTheta0), str(dTheta1)))
+f.close()
 
 # Clear display and set color to red for trial
 lcd.clear()
