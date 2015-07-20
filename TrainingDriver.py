@@ -1,5 +1,5 @@
-# coding: utf-8
 #!/usr/bin/python
+# coding: utf-8
 
 # Max Basescu
 # mbasesc1@jhu.edu
@@ -8,6 +8,8 @@ import socket
 import time
 import os
 import Adafruit_CharLCD as LCD
+
+os.chdir('/home/pi/DomeTrainingRig/')
 
 while True:
 

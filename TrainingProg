@@ -1,2 +1,2 @@
 #!/bin/bash
-sudo python TrainingRig_UserInput.py 2>/dev/null
+sudo python /home/pi/DomeTrainingRig/TrainingRig_UserInput.py 2>/dev/null
