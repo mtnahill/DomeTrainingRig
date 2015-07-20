@@ -34,5 +34,5 @@ while True:
 		time.sleep(0.1)
 	
 	# Runs main program
-	os.system('sudo python TrainingRig_UserInput.py')
+	os.system('./TrainingProg')
 
