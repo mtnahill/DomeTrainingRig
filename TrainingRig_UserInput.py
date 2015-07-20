@@ -1,6 +1,9 @@
 # coding: utf-8
 #!/usr/bin/python
 
+# Max Basescu
+# mbasesc1@jhu.edu
+# 
 # This script takes user specified details containing:
 # Laps - the number of laps to run the program for
 # Rat number - the current rat's identification number
@@ -13,7 +16,6 @@
 # +- 20deg randomness
 
 import math
-import socket
 import csv
 import time
 import random
@@ -37,7 +39,7 @@ GPIO.setup(buttonPin, GPIO.IN)
 GPIO.setup(encoderPinA, GPIO.IN)
 GPIO.setup(encoderPinB, GPIO.IN)
 
-# Set backlight color to Blue
+# Set backlight color to blue
 lcd.set_color(0.0, 0.0, 1.0)
 lcd.clear()
 
@@ -110,22 +112,7 @@ def toDeg(ang):
 def toEnc(ang):
 	return int(float(ang) / 360 * thetaLap)
 
-lcd.clear()
 print("Press Ctrl-C to quit.")
-
-# Show welcome screen with ip
-s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-s.connect(('8.8.8.8', 0))
-ipAdd = s.getsockname()[0]
-lcd.message('Welcome! IP is:\n{}'.format(ipAdd))
-
-# Wait for select to be pressed
-while not lcd.is_pressed(LCD.SELECT):
-	pass
-
-# Wait for select to be released
-while lcd.is_pressed(LCD.SELECT):
-	time.sleep(0.1)
 
 # Default string values
 lapsStr = "0    "
