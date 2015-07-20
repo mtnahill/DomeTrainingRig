@@ -1,0 +1,39 @@
+Author: Max Basescu
+mbasesc1@jhu.edu
+
+This is a training program for the LIMBS lab dome project, meant to be run on the Raspberry Pi B+ model with an Adafruit 16x2 RGB LCD Pi Plate.
+
+On a fresh Raspbian install, the following steps will be necessary to configure the Pi:
+
+> sudo raspi-config 
+In this menu, choose 'Advanced Options', then 'I2C', and answer yes to both questions.  Now restart the device.
+
+> sudo apt-get update
+> sudo apt-get install build-essential python-dev python-symbus python-pip i2c-tools
+> sudo pip install RPi.GPIO
+
+> sudo nano /etc/modules
+Add the following lines to the end of the file:
+
+i2c-bcm2708
+i2c-dev
+
+> sudo nano /etc/modprobe.d/raspi-blacklist.conf
+If the following lines exist, comment them out:
+
+blacklist spi-bcm2708
+blacklist i2c-bcm2708
+
+> sudo nano /boot/config.txt
+Add the following lines to the end of the file:
+
+device_tree=bcm2708-rpi-b-plus.dtb
+device_tree_param=i2c1=on
+device_tree_param=spi=on
+
+Finally, in the directory of the repository, run:
+> sudo python setup.py install
+to install Adafruit's LCD library.
+
+Now reboot, and the installation should be completed.
+
