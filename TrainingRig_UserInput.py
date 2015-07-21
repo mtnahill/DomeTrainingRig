@@ -49,6 +49,23 @@ theta = 0
 # Number of encoder readings per revolution
 thetaLap = 8192
 
+# Triggered by an interrupt from the button, this function
+# starts the motor and logs the event
+def buttonPress(ch):
+	try:
+		global f	
+		
+		# Only do stuff if we're not already pulsing
+		if tCurr - feedStart > pulseDur:
+			f.write('event | time={},feed=1\n'.format(tCurr))
+			GPIO.output(motorPin, True)
+			GPIO.output(ledPin, True)
+			buttonFeedStart = tCurr
+			buttonIsFeeding = True
+
+	except:
+		pass
+
 # Triggered by an edge on pin A, this function modifies
 # the value of theta according to the encoder state
 def readEncoderA(ch):
@@ -100,9 +117,10 @@ def readEncoderB(ch):
 			theta += 1 # CCW
 
 
-# Attach interrupts to pins A and B
+# Attach interrupts
 GPIO.add_event_detect(encoderPinA, GPIO.BOTH, callback = readEncoderA)
 GPIO.add_event_detect(encoderPinB, GPIO.BOTH, callback = readEncoderB)
+GPIO.add_event_detect(buttonPin, GPIO.RISING, callback = buttonPress, bouncetime = 1000)
 
 # Converts encoder angle to degrees
 def toDeg(ang):
@@ -124,15 +142,15 @@ dTheta1Str = "0    "
 # Loading previous entries from params file
 paramsFile = 'params.csv'
 try:
-	f = open(paramsFile, 'r+')
-	params = next(csv.reader(f, delimiter=','))
+	pFile = open(paramsFile, 'r+')
+	params = next(csv.reader(pFile, delimiter=','))
 	lapsStr = params[0]
 	ratStr = params[1]
 	dayStr = params[2]
 	dTheta0Str = params[3]
 	dTheta1Str = params[4]
 except:
-	f = open(paramsFile, 'w') # Create the file
+	pFile = open(paramsFile, 'w') # Create the file
 
 # Gets various fields from user (third argument specifies minimum input accepted)
 laps = UINPUT.genForm(lcd, 'Laps', lapsStr, 1)
@@ -148,9 +166,9 @@ dTheta1 = UINPUT.genForm(lcd, 'dTheta1', dTheta1Str, 0)
 print('dTheta1: ' + str(dTheta1))
 
 # Write new parameters to file
-f.seek(0)
-f.write('{:<5},{:<5},{:<5},{:<5},{:<5}'.format(str(laps), str(ratNum), str(day), str(dTheta0), str(dTheta1)))
-f.close()
+pFile.seek(0)
+pFile.write('{:<5},{:<5},{:<5},{:<5},{:<5}'.format(str(laps), str(ratNum), str(day), str(dTheta0), str(dTheta1)))
+pFile.close()
 
 # Clear display and set color to red for trial
 lcd.clear()
@@ -180,8 +198,13 @@ f.write('global | rat={},day={}\n'.format(ratNum,day))
 f.write('global | year={},month={},date={},hour={},min={},sec={}\n\n'.format(time.strftime('%Y'),time.strftime('%m'),time.strftime('%d'),time.strftime('%H'),time.strftime('%M'),time.strftime('%S')))
 
 # Begin running actual training program:
+
+# Variable initialization
+theta = 0 # Zero out theta
 isFeeding = False # Whether or not the motor is currently pulsing
 feedStart = 0 # Contains the time at which the motor was started
+buttonFeedStart = 0 # Contains the time at which the button was pressed
+buttonIsFeeding = False # Whether or not there is a button pulse going
 nextFeedAng = 0 # Stores next angle at which to begin feeding
 tInit = time.time() # Establish offset time
 
@@ -189,6 +212,13 @@ tInit = time.time() # Establish offset time
 while theta < goal:
 	tCurr = int(math.floor((time.time() - tInit) * 1000)) # Grabs current time in milliseconds
 	f.write('data | time={},theta={}\n'.format(tCurr, theta))
+
+	# If we're at the end of a button pulse
+	if tCurr - buttonFeedStart >= pulseDur:
+		buttonIsFeeding = False
+
+		# Write disable to log
+		f.write('event | time={},feed=0\n'.format(tCurr))	
 	
 	# Arrived at feeding location
 	if not isFeeding and theta >= nextFeedAng:
