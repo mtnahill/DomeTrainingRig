@@ -49,6 +49,9 @@ theta = 0
 # Number of encoder readings per revolution
 thetaLap = 8192
 
+# Duration of motor per feeding
+pulseDur = 4600 # ms
+
 # Triggered by an interrupt from the button, this function
 # starts the motor and logs the event
 def buttonPress(ch):
@@ -120,7 +123,7 @@ def readEncoderB(ch):
 # Attach interrupts
 GPIO.add_event_detect(encoderPinA, GPIO.BOTH, callback = readEncoderA)
 GPIO.add_event_detect(encoderPinB, GPIO.BOTH, callback = readEncoderB)
-GPIO.add_event_detect(buttonPin, GPIO.RISING, callback = buttonPress, bouncetime = 5000)
+GPIO.add_event_detect(buttonPin, GPIO.RISING, callback = buttonPress, bouncetime = pulseDur)
 
 # Converts encoder angle to degrees
 def toDeg(ang):
@@ -176,9 +179,6 @@ lcd.set_color(1.0, 0.0, 0.0)
 
 # Stop showing cursor on screen
 lcd.show_cursor(False)
-
-# Duration of motor per feeding
-pulseDur = 5000 # ms
 
 # Local base path to log folder
 logBase = 'logs/'
@@ -260,5 +260,6 @@ f.write('event | time={},goal=1\n#\n'.format(tCurr))
 # Turn motor off if it's on
 GPIO.output(motorPin, False)
 GPIO.output(ledPin, False)
+GPIO.cleanup()
 f.close()
 exit(0)
