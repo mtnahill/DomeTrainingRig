@@ -16,7 +16,6 @@
 # +- 20deg randomness
 
 import math
-import sys
 import csv
 import time
 import random
@@ -54,8 +53,6 @@ thetaLap = 8192
 # starts the motor and logs the event
 def buttonPress(ch):
 	try:
-		print('hi')
-		sys.stdout.flush()
 		global f, buttonFeedStart, buttonIsFeeding
 		
 		# Only do stuff if we're not already pulsing
@@ -123,7 +120,7 @@ def readEncoderB(ch):
 # Attach interrupts
 GPIO.add_event_detect(encoderPinA, GPIO.BOTH, callback = readEncoderA)
 GPIO.add_event_detect(encoderPinB, GPIO.BOTH, callback = readEncoderB)
-GPIO.add_event_detect(buttonPin, GPIO.RISING, callback = buttonPress, bouncetime = 2000)
+GPIO.add_event_detect(buttonPin, GPIO.RISING, callback = buttonPress, bouncetime = 5000)
 
 # Converts encoder angle to degrees
 def toDeg(ang):
@@ -181,7 +178,7 @@ lcd.set_color(1.0, 0.0, 0.0)
 lcd.show_cursor(False)
 
 # Duration of motor per feeding
-pulseDur = 2000 # ms
+pulseDur = 5000 # ms
 
 # Local base path to log folder
 logBase = 'logs/'

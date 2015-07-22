@@ -7,7 +7,11 @@
 import socket
 import time
 import os
+import RPi.GPIO as GPIO
 import Adafruit_CharLCD as LCD
+
+motorPin = 17
+GPIO.setup(motorPin, GPIO.OUT)
 
 os.chdir('/home/pi/DomeTrainingRig/')
 
@@ -29,7 +33,15 @@ while True:
 
 	# Wait for select to be pressed
 	while not lcd.is_pressed(LCD.SELECT):
-		pass
+		# If up is pressed
+		if lcd.is_pressed(LCD.UP):
+			while lcd.is_pressed(LCD.UP):
+				time.sleep(0.1)
+			
+			# Send a 440 second pulse to prime lines
+			GPIO.output(motorPin, True)
+			time.sleep(440)
+			GPIO.output(motorPin, False)
 
 	# Wait for select to be released
 	while lcd.is_pressed(LCD.SELECT):
