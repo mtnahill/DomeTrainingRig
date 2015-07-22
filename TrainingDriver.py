@@ -37,7 +37,7 @@ while True:
 		if lcd.is_pressed(LCD.UP):
 			while lcd.is_pressed(LCD.UP):
 				time.sleep(0.1)
-			
+
 			# Send a 440 second pulse to prime lines
 			GPIO.output(motorPin, True)
 			time.sleep(440)
