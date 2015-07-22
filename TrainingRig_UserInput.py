@@ -16,6 +16,7 @@
 # +- 20deg randomness
 
 import math
+import sys
 import csv
 import time
 import random
@@ -35,7 +36,7 @@ encoderPinA = 22
 encoderPinB = 23
 GPIO.setup(motorPin, GPIO.OUT)
 GPIO.setup(ledPin, GPIO.OUT)
-GPIO.setup(buttonPin, GPIO.IN)
+GPIO.setup(buttonPin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 GPIO.setup(encoderPinA, GPIO.IN)
 GPIO.setup(encoderPinB, GPIO.IN)
 
@@ -53,11 +54,13 @@ thetaLap = 8192
 # starts the motor and logs the event
 def buttonPress(ch):
 	try:
-		global f	
+		print('hi')
+		sys.stdout.flush()
+		global f, buttonFeedStart, buttonIsFeeding
 		
 		# Only do stuff if we're not already pulsing
-		if tCurr - feedStart > pulseDur:
-			f.write('event | time={},feed=1\n'.format(tCurr))
+		if tCurr - buttonFeedStart > pulseDur:
+			f.write('event | time={},manFeed=1\n'.format(tCurr))
 			GPIO.output(motorPin, True)
 			GPIO.output(ledPin, True)
 			buttonFeedStart = tCurr
@@ -120,7 +123,7 @@ def readEncoderB(ch):
 # Attach interrupts
 GPIO.add_event_detect(encoderPinA, GPIO.BOTH, callback = readEncoderA)
 GPIO.add_event_detect(encoderPinB, GPIO.BOTH, callback = readEncoderB)
-GPIO.add_event_detect(buttonPin, GPIO.RISING, callback = buttonPress, bouncetime = 1000)
+GPIO.add_event_detect(buttonPin, GPIO.RISING, callback = buttonPress, bouncetime = 2000)
 
 # Converts encoder angle to degrees
 def toDeg(ang):
@@ -214,11 +217,15 @@ while theta < goal:
 	f.write('data | time={},theta={}\n'.format(tCurr, theta))
 
 	# If we're at the end of a button pulse
-	if tCurr - buttonFeedStart >= pulseDur:
+	if tCurr - buttonFeedStart >= pulseDur and buttonIsFeeding == True:
 		buttonIsFeeding = False
 
+		# Stop pulsing motor
+		GPIO.output(motorPin, False)
+		GPIO.output(ledPin, False)
+
 		# Write disable to log
-		f.write('event | time={},feed=0\n'.format(tCurr))	
+		f.write('event | time={},manFeed=0\n'.format(tCurr))	
 	
 	# Arrived at feeding location
 	if not isFeeding and theta >= nextFeedAng:

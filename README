@@ -9,7 +9,7 @@ On a fresh Raspbian install, the following steps will be necessary to configure 
 In this menu, choose 'Advanced Options', then 'I2C', and answer yes to both questions.  Now restart the device.
 
 > sudo apt-get update
-> sudo apt-get install build-essential python-dev python-symbus python-pip i2c-tools
+> sudo apt-get install build-essential python-dev python-smbus python-pip i2c-tools
 > sudo pip install RPi.GPIO
 
 > sudo nano /etc/modules
