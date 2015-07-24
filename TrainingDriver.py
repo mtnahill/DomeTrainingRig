@@ -38,9 +38,15 @@ while True:
 			while lcd.is_pressed(LCD.UP):
 				time.sleep(0.1)
 
-			# Send a 440 second pulse to prime lines
+			# Prime the lines until up is pressed again
 			GPIO.output(motorPin, True)
-			time.sleep(440)
+			while not lcd.is_pressed(LCD.UP):
+				time.sleep(0.05)
+
+			while lcd.is_pressed(LCD.UP):
+				time.sleep(0.1)
+
+			# Turn off motor
 			GPIO.output(motorPin, False)
 
 	# Wait for select to be released
