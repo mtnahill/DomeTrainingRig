@@ -50,7 +50,7 @@ theta = 0
 thetaLap = 8192
 
 # Duration of motor per feeding
-pulseDur = 4800 # ms
+pulseDur = 2100 # ms
 
 # Triggered by an interrupt from the button, this function
 # starts the motor and logs the event
