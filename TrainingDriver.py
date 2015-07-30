@@ -40,6 +40,8 @@ while True:
 
 			# Prime the lines until up is pressed again
 			GPIO.output(motorPin, True)
+			lcd.clear()
+			lcd.message('Priming motor...\n')
 			while not lcd.is_pressed(LCD.UP):
 				time.sleep(0.05)
 
@@ -48,6 +50,14 @@ while True:
 
 			# Turn off motor
 			GPIO.output(motorPin, False)
+			lcd.clear()
+			lcd.message('Welcome! IP is:\n{}'.format(ipAdd)
+		
+		# Shutdown if right is pressed	
+		elif lcd.is_pressed(LCD.RIGHT):
+			lcd.clear()
+			lcd.message('Shutting down...\n')
+			os.system('shutdown -h now')
 
 	# Wait for select to be released
 	while lcd.is_pressed(LCD.SELECT):
