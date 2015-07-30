@@ -51,7 +51,7 @@ while True:
 			# Turn off motor
 			GPIO.output(motorPin, False)
 			lcd.clear()
-			lcd.message('Welcome! IP is:\n{}'.format(ipAdd)
+			lcd.message('Welcome! IP is:\n{}'.format(ipAdd))
 		
 		# Shutdown if right is pressed	
 		elif lcd.is_pressed(LCD.RIGHT):
