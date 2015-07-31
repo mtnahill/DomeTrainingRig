@@ -2,26 +2,42 @@ Max Basescu
 mbasesc1@jhu.edu
 7/31/2015
 
-This file contains information about the usage of the programs contained in the DomeTrainingRig project, meant for deployment on the Raspberry Pi B+ with the Adafruit i2c 16x2 LCD Pi Plate:
+This file contains information about the usage of the programs contained in the
+DomeTrainingRig project, meant for deployment on the Raspberry Pi B+ with the
+Adafruit i2c 16x2 LCD Pi Plate:
 
-Upon boot, TrainingDriver.py is launched.  This script first displays a welcome screen containing the Pi's local IP address, in case ssh access is needed.
+Upon boot, TrainingDriver.py is launched.  This script first displays a welcome
+screen containing the Pi's local IP address, in case ssh access is needed.
 
-After displaying the welcome screen, TrainingDriver awaits input.  There are three choices:
+After displaying the welcome screen, TrainingDriver awaits input.  There are
+three choices:
 
-1. Pressing UP will enable the motor until the button is pressed again.  A message is displayed to the user informing them of this operation.  
+1. Pressing UP will enable the motor until the button is pressed again.  A
+message is displayed to the user informing them of this operation.  
 
 2. Pressing RIGHT will shutdown the Raspberry Pi
 
-3. Pressing SELECT will spawn a child process containing the main training program.
+3. Pressing SELECT will spawn a child process containing the main training
+program.
 
-After pressing SELECT, the main training routine begins.  The user is prompted for numeric input for a variety of fields.  Input can be entered using the UP/DOWN keys to increment or decrement each digit, and the RIGHT/LEFT keys to navigate back and forth between digits.  The fields available are:  
+After pressing SELECT, the main training routine begins.  The user is prompted
+for numeric input for a variety of fields.  Input can be entered using the
+UP/DOWN keys to increment or decrement each digit, and the RIGHT/LEFT keys to
+navigate back and forth between digits.  The fields available are:  
 
-Laps: The number of laps to run the program for.  Counter-clockwise rotation is considered positive.
+Laps: The number of laps to run the program for.  Counter-clockwise rotation is
+considered positive.
 Day: The current day of training.
 RatNum: The ID number for the rat being trained.
 dTheta0: The initial angle interval at which to feed.
 dTheta1: The final angle at which to feed.
 
-After input, the program begins its active state, which is signified by the screen turning red.  There is a feeding event as soon as the program begins, and over the course of the program, the feeding interval is transitioned linearly between dTheta0 and dTheta1, with +-20deg noise.
+After input, the program begins its active state, which is signified by the
+screen turning red.  There is a feeding event as soon as the program begins,
+and over the course of the program, the feeding interval is transitioned
+linearly between dTheta0 and dTheta1, with +-20deg noise.
 
-Once the rat has completed the specified number of laps, the training program exits and control is returned to TrainingDriver, where the user can perform any of the available actions listed above.  Logged information about the trial can be found in the 'logs' folder.
+Once the rat has completed the specified number of laps, the training program
+exits and control is returned to TrainingDriver, where the user can perform any
+of the available actions listed above.  Logged information about the trial can
+be found in the 'logs' folder.
