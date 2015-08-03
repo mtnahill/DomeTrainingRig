@@ -176,6 +176,7 @@ pFile.close()
 # Clear display and set color to red for trial
 lcd.clear()
 lcd.set_color(1.0, 0.0, 0.0)
+lcd.message('Press select to end')
 
 # Stop showing cursor on screen
 lcd.show_cursor(False)
@@ -212,6 +213,14 @@ tInit = time.time() # Establish offset time
 while theta < goal:
 	tCurr = int(math.floor((time.time() - tInit) * 1000)) # Grabs current time in milliseconds
 	f.write('data | time={},theta={}\n'.format(tCurr, theta))
+
+	# If the user decides to end the trial early
+	if lcd.is_pressed(LCD.SELECT):
+		while lcd.is_pressed(LCD.SELECT):
+			time.sleep(0.1)
+
+		f.write('event | time={},end=manual\n'.format(tCurr))
+		break
 
 	# If we're at the end of a button pulse
 	if tCurr - buttonFeedStart >= pulseDur and buttonIsFeeding == True:

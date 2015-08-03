@@ -55,9 +55,25 @@ while True:
 		
 		# Shutdown if right is pressed	
 		elif lcd.is_pressed(LCD.RIGHT):
+			while lcd.is_pressed(LCD.RIGHT):
+				time.sleep(0.1)
+			
+			# Prompt for confirmation of shutdown
 			lcd.clear()
-			lcd.message('Shutting down...\n')
-			os.system('shutdown -h now')
+			lcd.message('Are you sure?\nUP=yes, DOWN=no')
+			while not lcd.is_pressed(LCD.UP) and not lcd.is_pressed(LCD.DOWN)
+				pass
+			
+			# Up means yes
+			if lcd.is_pressed(LCD.UP):
+				lcd.clear()
+				lcd.message('Shutting down...\n')
+				os.system('shutdown -h now')
+			
+			# Down means cancel
+			else:
+				while lcd.is_pressed(LCD.DOWN):
+					time.sleep(0.1)
 
 	# Wait for select to be released
 	while lcd.is_pressed(LCD.SELECT):
