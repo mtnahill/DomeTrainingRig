@@ -4,7 +4,10 @@ mbasesc1@jhu.edu
 
 This file contains information relating to the code structure for the DomeTrainingRig project.
 
-The base program is TrainingDriver.py, which is run at boot.  TrainingDriver doesn't do anything fancy, it just displays a welcome screen with its IP address (in case you want to ssh into the Pi), and allows the user a couple actions.
+The base program is TrainingDriver.py, which is run at boot.  TrainingDriver
+doesn't do anything fancy, it just displays a welcome screen with its IP
+address (in case you want to ssh into the Pi), and allows the user a couple
+actions.
 
 The code for this file is very straightforward and doesn't need further
 explanation than is given by the comments.
@@ -37,3 +40,51 @@ toDeg(ang) and toEnc(ang) allow conversion between the encoder representation
 of angle and the degree representation of angle.
 
 
+In the main body of the program (after all the initial imports and setup),
+we begin by trying to load the previous set of entries from a file called 
+'params.csv'.  If this file exists, we grab the entries it contains.
+I chose to represent these entries as strings since that data type 
+lent itself to the digit-wise input very cleanly.
+
+If we can't load the entries, we simply create an empty file with the name
+'params.csv'.  
+
+We then call UINPUT.genForm for each user accessible field, passing it the
+lcd object, the name of the field (for display purposes), the previous entry,
+and the minimum accepted value.  UINPUT.genForm will gather the user's input,
+check for validity (prompting until the user inputs a correct value), and return
+the inputted value as an integer.  Most of the code in UINPUT.genForm is just
+used to manipulate the cursor safely and coerce each digit of user input to 
+an acceptable range (0-9), so it's really not worth going over it line by line.
+
+After grabbing the new parameters, they are written to the params file as a 
+5 character string (left justified).
+
+We then open a file handle to a log file with the name format:
+"<year><month><day>_rat<ratNum>_day(day)_training.dat"
+And we write some initial parameters to the file.
+
+We then use our conversion functions to get the inputted dTheta0, dTheta1,
+and laps (now called goal), in encoder units.
+
+Now begins the main loop of the program, which runs until the encoder angle
+has surpassed the goal angle.  This loops performs the following tasks in order,
+with a 10ms delay in between iterations:
+
+1. We get the current time in milliseconds and log the current angle with
+a timestamp.
+2. We check if the SELECT button is pressed, and we log the event and break the 
+loop if so.
+3. We check if we are currently in a button feeding event and if it is time to 
+stop the event.  If so, we stop pulsing the motor and write the event to the log.
+4. We check if the current angle has surpassed the calculated angle of the next 
+feed event, as well as if we're not currently feeding.  If so, we write True to
+isFeeding, begin pulsing the motor, and record the time that we started feeding.
+This event is logged.
+5. We check if we're currently feeding and we've been feeding for at least the
+length of a pulse.  If so, we stop pulsing the motor and write False to isFeeding.
+This event is logged.
+
+
+After the loop has been exited, we turn off the motor, clean up the pins, close the 
+log file, and quit.
