@@ -29,7 +29,8 @@ while True:
 	s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 	s.connect(('8.8.8.8', 0))
 	ipAdd = s.getsockname()[0]
-	lcd.message('Welcome! IP is:\n{}'.format(ipAdd))
+	welcomeMsg = 'Welcome! IP is:\n{}'.format(ipAdd)
+	lcd.message(welcomeMsg)
 
 	# Wait for select to be pressed
 	while not lcd.is_pressed(LCD.SELECT):
@@ -51,8 +52,8 @@ while True:
 			# Turn off motor
 			GPIO.output(motorPin, False)
 			lcd.clear()
-			lcd.message('Welcome! IP is:\n{}'.format(ipAdd))
-		
+			lcd.message(welcomeMsg)
+
 		# Shutdown if right is pressed	
 		elif lcd.is_pressed(LCD.RIGHT):
 			while lcd.is_pressed(LCD.RIGHT):
@@ -62,7 +63,7 @@ while True:
 			lcd.clear()
 			lcd.message('Are you sure?\nUP=yes, DOWN=no')
 			while not lcd.is_pressed(LCD.UP) and not lcd.is_pressed(LCD.DOWN)
-				pass
+				time.sleep(0.01)
 			
 			# Up means yes
 			if lcd.is_pressed(LCD.UP):
@@ -74,6 +75,8 @@ while True:
 			else:
 				while lcd.is_pressed(LCD.DOWN):
 					time.sleep(0.1)
+				lcd.clear()
+				lcd.message(welcomeMsg)
 
 	# Wait for select to be released
 	while lcd.is_pressed(LCD.SELECT):
