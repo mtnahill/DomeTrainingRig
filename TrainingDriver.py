@@ -61,7 +61,7 @@ while True:
 			# Prompt for confirmation of shutdown
 			lcd.clear()
 			lcd.message('Are you sure?\nUP=yes, DOWN=no')
-			while not lcd.is_pressed(LCD.UP) and not lcd.is_pressed(LCD.DOWN)
+			while not lcd.is_pressed(LCD.UP) and not lcd.is_pressed(LCD.DOWN):
 				pass
 			
 			# Up means yes
