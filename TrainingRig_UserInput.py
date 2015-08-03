@@ -176,7 +176,7 @@ pFile.close()
 # Clear display and set color to red for trial
 lcd.clear()
 lcd.set_color(1.0, 0.0, 0.0)
-lcd.message('Press select to end')
+lcd.message('Press select\nto cancel')
 
 # Stop showing cursor on screen
 lcd.show_cursor(False)

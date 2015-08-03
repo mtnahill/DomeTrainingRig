@@ -11,12 +11,13 @@ import RPi.GPIO as GPIO
 import Adafruit_CharLCD as LCD
 
 motorPin = 17
-GPIO.setup(motorPin, GPIO.OUT)
 
 os.chdir('/home/pi/DomeTrainingRig/')
 
 while True:
-
+	# Initialize motor pin
+	GPIO.setup(motorPin, GPIO.OUT)
+	
 	# Initialize the LCD using the pins
 	lcd = LCD.Adafruit_CharLCDPlate()
 	lcd.show_cursor(False)
