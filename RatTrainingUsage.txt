@@ -15,7 +15,8 @@ three choices:
 1. Pressing UP will enable the motor until the button is pressed again.  A
 message is displayed to the user informing them of this operation.  
 
-2. Pressing RIGHT will shutdown the Raspberry Pi
+2. Pressing RIGHT will ask for confirmation (UP for yes, DOWN for no),
+   before shutting down the Raspberry Pi
 
 3. Pressing SELECT will spawn a child process containing the main training
 program.
@@ -37,7 +38,8 @@ screen turning red.  There is a feeding event as soon as the program begins,
 and over the course of the program, the feeding interval is transitioned
 linearly between dTheta0 and dTheta1, with +-20deg noise.
 
-Once the rat has completed the specified number of laps, the training program
+Once the rat has completed the specified number of laps, or the user chooses to end
+the trial early by pressing SELECT, the training program
 exits and control is returned to TrainingDriver, where the user can perform any
 of the available actions listed above.  Logged information about the trial can
 be found in the 'logs' folder.

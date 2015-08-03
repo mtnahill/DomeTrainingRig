@@ -1,0 +1,39 @@
+Max Basescu
+mbasesc1@jhu.edu
+7/31/2015
+
+This file contains information relating to the code structure for the DomeTrainingRig project.
+
+The base program is TrainingDriver.py, which is run at boot.  TrainingDriver doesn't do anything fancy, it just displays a welcome screen with its IP address (in case you want to ssh into the Pi), and allows the user a couple actions.
+
+The code for this file is very straightforward and doesn't need further
+explanation than is given by the comments.
+
+The main training program TrainingRig_UserInput.py can be run using the
+TrainingProg bash script.  I made this script to present a single way of
+calling the main training program with the same set of arguments every time.
+Right now, it just redirects the error stream to /dev/null because there are
+some unimportant error messages from external libraries that don't need to be
+displayed.
+
+TrainingRig_UserInput.py is also fairly straightforward.  Towards the top of
+the file, we do a lot of initialization of the pins and variables we'll be
+using later.  We also define functions to handle interrupts from the encoder
+and the button (used for manual feeding). 
+
+Function explanations:
+
+buttonPress(ch) is called when a rising edge is detected on the button pin. It
+simply enables the motor and sets a flag <buttonIsFeeding> to True in order to
+inform the main body of the program of the interrupt.  It also stores the time
+that the button was pressed in <buttonFeedStart>.
+
+The readEncoderA(ch) and readEncoderB(ch) functions are called for both edges
+on pins A and B, respectively.  They decode the quadrature signal produced by
+the encoder, in order to store the current angle of the rat relative to the
+initial position.
+
+toDeg(ang) and toEnc(ang) allow conversion between the encoder representation
+of angle and the degree representation of angle.
+
+
