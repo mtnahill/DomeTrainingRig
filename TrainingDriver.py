@@ -30,7 +30,7 @@ while True:
 	s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 	s.connect(('8.8.8.8', 0))
 	ipAdd = s.getsockname()[0]
-	welcomeMsg = 'Welcome! IP is:\n{}'.format(ipAdd)
+	welcomeMsg = 'IP:{}\nUP to prime'.format(ipAdd)
 	lcd.message(welcomeMsg)
 
 	# Wait for select to be pressed
