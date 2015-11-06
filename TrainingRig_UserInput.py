@@ -43,11 +43,11 @@ GPIO.setup(encoderPinB, GPIO.IN)
 lcd.set_color(0.0, 0.0, 1.0)
 lcd.clear()
 
-# Initialization of current angle, theta
-theta = 0
+# Initialization of current angle, count
+count = 0
 
 # Number of encoder readings per revolution
-thetaLap = 8192
+countsPerLap = 4096
 
 # Duration of motor per feeding
 pulseDur = 1500 # ms
@@ -70,9 +70,9 @@ def buttonPress(ch):
 		pass
 
 # Triggered by an edge on pin A, this function modifies
-# the value of theta according to the encoder state
+# the value of count according to the encoder state
 def readEncoderA(ch):
-	global theta
+	global count
 	
 	# Grab readings from the pins
 	aState = GPIO.input(encoderPinA)
@@ -82,22 +82,22 @@ def readEncoderA(ch):
 	if aState == True:
 		# Check direction of encoder turning
 		if bState == False:
-			theta -= 1 # CW
+			count -= 1 # CW
 		else:
-			theta += 1 # CCW
+			count += 1 # CCW
 
 	# There's a falling edge on A
 	else:
 		# Check direction of encoder turning
 		if bState == True:
-			theta -= 1 # CW
+			count -= 1 # CW
 		else:
-			theta += 1 # CCW
+			count += 1 # CCW
 
 # Triggered by an edge on pin B, this function modifies
-# the value of theta according to the encoder state
+# the value of count according to the encoder state
 def readEncoderB(ch):
-	global theta
+	global count
 	
 	# Grab readings from the pins
 	aState = GPIO.input(encoderPinA)
@@ -107,17 +107,17 @@ def readEncoderB(ch):
 	if bState == True:
 		# Check direction of encoder turning
 		if aState == True:
-			theta -= 1 # CW
+			count -= 1 # CW
 		else:
-			theta += 1 # CCW
+			count += 1 # CCW
 
 	# There's a falling edge on B
 	else:
 		# Check direction of encoder turning
 		if aState == False:
-			theta -= 1 # CW
+			count -= 1 # CW
 		else:
-			theta += 1 # CCW
+			count += 1 # CCW
 
 
 # Attach interrupts
@@ -125,13 +125,13 @@ GPIO.add_event_detect(encoderPinA, GPIO.BOTH, callback = readEncoderA)
 GPIO.add_event_detect(encoderPinB, GPIO.BOTH, callback = readEncoderB)
 GPIO.add_event_detect(buttonPin, GPIO.RISING, callback = buttonPress, bouncetime = pulseDur)
 
-# Converts encoder angle to degrees
-def toDeg(ang):
-	return int(float(ang) / thetaLap * 360)
+# Converts encoder counts to degrees
+def toDeg(cnt):
+	return float(cnt) / countsPerLap * 360
 
-# Converts degrees to encoder angle
-def toEnc(ang):
-	return int(float(ang) / 360 * thetaLap)
+# Converts degrees to encoder counts
+def toCnt(deg):
+	return int(float(deg) / 360 * countsPerLap)
 
 print("Press Ctrl-C to quit.")
 
@@ -190,9 +190,9 @@ f = open(fName, "a")
 
 # Prints info, then converts values in degrees into values compatible with encoder readings
 f.write('\nglobal | dTheta0={},dTheta1={},pulseDur={},goal={}\n'.format(dTheta0, dTheta1, pulseDur, goal))
-dTheta0 = toEnc(dTheta0)
-dTheta1 = toEnc(dTheta1)
-goal = toEnc(goal)
+dTheta0 = toCnt(dTheta0)
+dTheta1 = toCnt(dTheta1)
+goal = toCnt(goal)
 
 # Writes general trial info including timestamp
 f.write('global | rat={},day={}\n'.format(ratNum,day))
@@ -201,7 +201,7 @@ f.write('global | year={},month={},date={},hour={},min={},sec={}\n\n'.format(tim
 # Begin running actual training program:
 
 # Variable initialization
-theta = 0 # Zero out theta
+count = 0 # Zero out count
 isFeeding = False # Whether or not the motor is currently pulsing
 feedStart = 0 # Contains the time at which the motor was started
 buttonFeedStart = 0 # Contains the time at which the button was pressed
@@ -210,9 +210,18 @@ nextFeedAng = 0 # Stores next angle at which to begin feeding
 tInit = time.time() # Establish offset time
 
 # Until the rat has run the specified number of laps
-while theta < goal:
+tDispNext = 0
+tDispIncr = 1000
+while count < goal:
 	tCurr = int(math.floor((time.time() - tInit) * 1000)) # Grabs current time in milliseconds
-	f.write('data | time={},theta={}\n'.format(tCurr, theta))
+	f.write('data | time={},theta={}\n'.format(tCurr, toDeg(count)))
+	
+	if tCurr>tDispNext:
+		lcd.clear()
+		statusMsg = 'Laps: {:.2}/{:d}\nSEL to cancel'.format(float(toDeg(count))/360,laps);
+		lcd.message(statusMsg)
+		tDispNext += tDispIncr
+	
 
 	# If the user decides to end the trial early
 	if lcd.is_pressed(LCD.SELECT):
@@ -234,7 +243,7 @@ while theta < goal:
 		f.write('event | time={},manFeed=0\n'.format(tCurr))	
 	
 	# Arrived at feeding location
-	if not isFeeding and theta >= nextFeedAng:
+	if not isFeeding and count >= nextFeedAng:
 		feedStart = tCurr
 		isFeeding = True
 		
@@ -254,8 +263,8 @@ while theta < goal:
 		GPIO.output(motorPin, False)
 
 		# Calculate current interval between feedings and next feed angle
-		dTheta = dTheta0 + (dTheta1 - dTheta0) * theta / goal
-		nextFeedAng = theta + dTheta + random.randint(-455, 455)
+		dTheta = dTheta0 + (dTheta1 - dTheta0) * count / goal
+		nextFeedAng = count + dTheta + random.randint(-math.floor(dTheta/2),math.floor(dTheta/2))
 	
 		# Write disable to log
 		f.write('event | time={},feed=0\n'.format(tCurr))	

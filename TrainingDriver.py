@@ -26,23 +26,53 @@ while True:
 	lcd.set_color(0.0, 0.0, 1.0)
 	lcd.clear()
 
-	# Show welcome screen with ip
+	# Get ip
 	s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 	s.connect(('8.8.8.8', 0))
 	ipAdd = s.getsockname()[0]
-	welcomeMsg = 'IP:{}\nUP to prime'.format(ipAdd)
+
+	welcomeMsg = 'Welcome!\nDOWN for help'
 	lcd.message(welcomeMsg)
 
 	# Wait for select to be pressed
 	while not lcd.is_pressed(LCD.SELECT):
+		# If left is pressed
+		if lcd.is_pressed(LCD.LEFT):
+			ipMsg = 'IP:\n{}'.format(ipAdd)
+			lcd.clear()
+			lcd.set_color(1.0, 1.0, 0.0)
+			lcd.message(ipMsg)
+
+			while not (lcd.is_pressed(LCD.UP) or lcd.is_pressed(LCD.DOWN) or lcd.is_pressed(LCD.LEFT) or lcd.is_pressed(LCD.RIGHT) or lcd.is_pressed(LCD.SELECT)):
+				pass;
+			
+			lcd.clear()
+			lcd.set_color(0.0, 0.0, 1.0)
+			lcd.message(welcomeMsg)
+	
+		# If down is pressed
+		elif lcd.is_pressed(LCD.DOWN):
+			helpMsg = ' UP:Prime RT:Off\nSEL:Start LT:IP'
+			lcd.clear()
+			lcd.set_color(0.0, 1.0, 0.0)
+			lcd.message(helpMsg)
+			
+			while not (lcd.is_pressed(LCD.UP) or lcd.is_pressed(LCD.DOWN) or lcd.is_pressed(LCD.LEFT) or lcd.is_pressed(LCD.RIGHT) or lcd.is_pressed(LCD.SELECT)):
+				pass;
+			
+			lcd.clear()
+			lcd.set_color(0.0, 0.0, 1.0)
+			lcd.message(welcomeMsg)
+
 		# If up is pressed
-		if lcd.is_pressed(LCD.UP):
+		elif lcd.is_pressed(LCD.UP):
 			while lcd.is_pressed(LCD.UP):
 				time.sleep(0.1)
 
 			# Prime the lines until up is pressed again
 			GPIO.output(motorPin, True)
 			lcd.clear()
+			lcd.set_color(0.0, 1.0, 1.0)
 			lcd.message('Priming motor...\n')
 			while not lcd.is_pressed(LCD.UP):
 				time.sleep(0.05)
@@ -53,6 +83,7 @@ while True:
 			# Turn off motor
 			GPIO.output(motorPin, False)
 			lcd.clear()
+			lcd.set_color(0.0, 0.0, 1.0)
 			lcd.message(welcomeMsg)
 
 		# Shutdown if right is pressed	
@@ -62,6 +93,7 @@ while True:
 			
 			# Prompt for confirmation of shutdown
 			lcd.clear()
+			lcd.set_color(1.0, 0.0, 0.0)
 			lcd.message('Are you sure?\nUP=yes, DOWN=no')
 
 			while not lcd.is_pressed(LCD.UP) and not lcd.is_pressed(LCD.DOWN):
@@ -78,6 +110,7 @@ while True:
 				while lcd.is_pressed(LCD.DOWN):
 					time.sleep(0.1)
 				lcd.clear()
+				lcd.set_color(0.0, 0.0, 1.0)
 				lcd.message(welcomeMsg)
 
 	# Wait for select to be released
